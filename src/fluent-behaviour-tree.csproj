@@ -42,6 +42,7 @@
     <Compile Include="BehaviourTreeStatus.cs" />
     <Compile Include="IBehaviourTreeNode.cs" />
     <Compile Include="Nodes\ActionNode.cs" />
+    <Compile Include="Nodes\InverterNode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TimeData.cs" />
   </ItemGroup>
