@@ -79,5 +79,59 @@ namespace tests
             });
         }
 
+        [Fact]
+        public void can_create_a_sequence()
+        {
+            Init();
+
+            var invokeCount = 0;
+
+            var sequence = testObject
+                .Sequence("some-sequence")
+                    .Do("some-action-1", t => 
+                    {
+                        ++invokeCount;
+                        return BehaviourTreeStatus.Success;
+                    })
+                    .Do("some-action-2", t =>
+                    {
+                        ++invokeCount;
+                        return BehaviourTreeStatus.Success;
+                    })
+                .End()
+                .Build();
+
+            Assert.IsType<SequenceNode>(sequence);
+            Assert.Equal(BehaviourTreeStatus.Success, sequence.Tick(new TimeData()));
+            Assert.Equal(2, invokeCount);
+        }
+
+        [Fact]
+        public void can_create_parallel()
+        {
+            Init();
+
+            var invokeCount = 0;
+
+            var parallel = testObject
+                .Parallel("some-parallel", 2, 2)
+                    .Do("some-action-1", t =>
+                    {
+                        ++invokeCount;
+                        return BehaviourTreeStatus.Success;
+                    })
+                    .Do("some-action-2", t =>
+                    {
+                        ++invokeCount;
+                        return BehaviourTreeStatus.Success;
+                    })
+                .End()
+                .Build();
+
+            Assert.IsType<ParallelNode>(parallel);
+            Assert.Equal(BehaviourTreeStatus.Success, parallel.Tick(new TimeData()));
+            Assert.Equal(2, invokeCount);
+        }
+
     }
 }

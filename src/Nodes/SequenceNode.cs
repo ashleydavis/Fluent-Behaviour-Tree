@@ -8,12 +8,22 @@ namespace fluent_behaviour_tree.Nodes
     /// <summary>
     /// Runs child nodes in sequence, until one fails.
     /// </summary>
-    public class SequenceNode : IBehaviourTreeNode
+    public class SequenceNode : IParentBehaviourTreeNode
     {
+        /// <summary>
+        /// Name of the node.
+        /// </summary>
+        private string name;
+
         /// <summary>
         /// List of child nodes.
         /// </summary>
         private List<IBehaviourTreeNode> children = new List<IBehaviourTreeNode>(); //todo: this could be optimized as a baked array.
+
+        public SequenceNode(string name)
+        {
+            this.name = name;
+        }
 
         public BehaviourTreeStatus Tick(TimeData time)
         {

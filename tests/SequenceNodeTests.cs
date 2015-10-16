@@ -15,7 +15,7 @@ namespace tests
 
         void Init()
         {
-            testObject = new SequenceNode();
+            testObject = new SequenceNode("some-sequence");
         }
         
         [Fact]

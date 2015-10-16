@@ -53,6 +53,38 @@ namespace fluent_behaviour_tree
         }
 
         /// <summary>
+        /// Create a sequence node.
+        /// </summary>
+        public BehaviourTreeBuilder Sequence(string name)
+        {
+            var sequenceNode = new SequenceNode(name);
+
+            if (parentNodeStack.Count > 0)
+            {
+                parentNodeStack.Peek().AddChild(sequenceNode);
+            }
+
+            parentNodeStack.Push(sequenceNode);
+            return this;
+        }
+
+        /// <summary>
+        /// Create a parallel node.
+        /// </summary>
+        public BehaviourTreeBuilder Parallel(string name, int numRequiredToFail, int numRequiredToSucceed)
+        {
+            var parallelNode = new ParallelNode(name, numRequiredToFail, numRequiredToSucceed);
+
+            if (parentNodeStack.Count > 0)
+            {
+                parentNodeStack.Peek().AddChild(parallelNode);
+            }
+
+            parentNodeStack.Push(parallelNode);
+            return this;
+        }
+
+        /// <summary>
         /// Build the actual tree.
         /// </summary>
         public IBehaviourTreeNode Build()
@@ -68,5 +100,6 @@ namespace fluent_behaviour_tree
             curNode = parentNodeStack.Pop();
             return this;
         }
+
     }
 }

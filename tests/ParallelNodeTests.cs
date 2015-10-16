@@ -13,9 +13,9 @@ namespace tests
     {
         ParallelNode testObject;
 
-        void Init(int numFailures = 0, int numSuccesses = 0)
+        void Init(int numRequiredToFail = 0, int numRequiredToSucceed = 0)
         {
-            testObject = new ParallelNode(numFailures, numSuccesses);
+            testObject = new ParallelNode("some-parallel", numRequiredToFail, numRequiredToSucceed);
         }
 
         [Fact]

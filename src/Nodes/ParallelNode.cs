@@ -8,8 +8,13 @@ namespace fluent_behaviour_tree.Nodes
     /// <summary>
     /// Runs childs nodes in parallel.
     /// </summary>
-    public class ParallelNode : IBehaviourTreeNode
+    public class ParallelNode : IParentBehaviourTreeNode
     {
+        /// <summary>
+        /// Name of the node.
+        /// </summary>
+        private string name;
+
         /// <summary>
         /// List of child nodes.
         /// </summary>
@@ -25,8 +30,9 @@ namespace fluent_behaviour_tree.Nodes
         /// </summary>
         private int numRequiredToSucceed;
 
-        public ParallelNode(int numRequiredToFail, int numRequiredToSucceed)
+        public ParallelNode(string name, int numRequiredToFail, int numRequiredToSucceed)
         {
+            this.name = name;
             this.numRequiredToFail = numRequiredToFail;
             this.numRequiredToSucceed = numRequiredToSucceed;
         }

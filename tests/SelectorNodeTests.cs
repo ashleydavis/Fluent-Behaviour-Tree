@@ -15,7 +15,7 @@ namespace tests
 
         void Init()
         {
-            testObject = new SelectorNode();
+            testObject = new SelectorNode("some-selector");
         }
 
         [Fact]
