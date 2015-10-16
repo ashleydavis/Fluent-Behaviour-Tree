@@ -39,6 +39,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BehaviourTreeBuilder.cs" />
     <Compile Include="BehaviourTreeStatus.cs" />
     <Compile Include="IBehaviourTreeNode.cs" />
     <Compile Include="Nodes\ActionNode.cs" />
