@@ -11,12 +11,23 @@ namespace fluent_behaviour_tree
     /// </summary>
     public class BehaviourTreeBuilder
     {
+        private IBehaviourTreeNode curNode;
+
         /// <summary>
         /// Create an action node.
         /// </summary>
-        public static IBehaviourTreeNode Do(string name, Func<TimeData, BehaviourTreeStatus> fn)
+        public BehaviourTreeBuilder Do(string name, Func<TimeData, BehaviourTreeStatus> fn)
         {
-            return new ActionNode(name, fn);
+            curNode = new ActionNode(name, fn);
+            return this;
+        }
+
+        /// <summary>
+        /// Build the actual tree.
+        /// </summary>
+        public IBehaviourTreeNode Build()
+        {
+            return curNode;
         }
     }
 }

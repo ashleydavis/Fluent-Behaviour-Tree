@@ -24,12 +24,13 @@ namespace tests
 
             var invokeCount = 0;
 
-            var node = BehaviourTreeBuilder
+            var node = testObject
                 .Do("some-node", t =>
                 {
                     ++invokeCount;
                     return BehaviourTreeStatus.Running;
-                });
+                })
+                .Build();
 
             Assert.IsType<ActionNode>(node);
             Assert.Equal(BehaviourTreeStatus.Running, node.Tick(new TimeData()));
