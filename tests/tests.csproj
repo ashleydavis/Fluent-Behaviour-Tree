@@ -53,6 +53,7 @@
     <Compile Include="ActionNodeTests.cs" />
     <Compile Include="InverterNodeTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SequenceNodeTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
