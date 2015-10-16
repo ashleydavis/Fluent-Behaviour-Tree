@@ -47,6 +47,21 @@ namespace tests
         }
 
         [Fact]
+        public void condition_is_syntactic_sugar_for_do()
+        {
+            Init();
+
+            var node = testObject
+                .Inverter("some-inverter")
+                    .Condition("some-node", t => true)
+                .End()
+                .Build();
+
+            Assert.IsType<InverterNode>(node);
+            Assert.Equal(BehaviourTreeStatus.Failure, node.Tick(new TimeData()));
+        }
+
+        [Fact]
         public void can_invert_an_inverter()
         {
             Init();

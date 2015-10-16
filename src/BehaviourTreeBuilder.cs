@@ -37,6 +37,14 @@ namespace fluent_behaviour_tree
         }
 
         /// <summary>
+        /// Like an action node... but the function can return true/false and is mapped to success/failure.
+        /// </summary>
+        public BehaviourTreeBuilder Condition(string name, Func<TimeData, bool> fn)
+        {
+            return Do(name, t => fn(t) ? BehaviourTreeStatus.Success : BehaviourTreeStatus.Failure);
+        }
+
+        /// <summary>
         /// Create an inverter node that inverts the success/failure of its children.
         /// </summary>
         public BehaviourTreeBuilder Inverter(string name)
