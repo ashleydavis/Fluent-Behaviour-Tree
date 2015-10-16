@@ -15,7 +15,7 @@ namespace tests
 
         void Init()
         {
-            testObject = new InverterNode();
+            testObject = new InverterNode("some-node");
         }
 
         [Fact]
@@ -40,7 +40,7 @@ namespace tests
                 .Setup(m => m.Tick(time))
                 .Returns(BehaviourTreeStatus.Success);
 
-            testObject.SetChild(mockChildNode.Object);
+            testObject.AddChild(mockChildNode.Object);
 
             Assert.Equal(BehaviourTreeStatus.Failure, testObject.Tick(time));
 
@@ -59,7 +59,7 @@ namespace tests
                 .Setup(m => m.Tick(time))
                 .Returns(BehaviourTreeStatus.Failure);
 
-            testObject.SetChild(mockChildNode.Object);
+            testObject.AddChild(mockChildNode.Object);
 
             Assert.Equal(BehaviourTreeStatus.Success, testObject.Tick(time));
 
@@ -78,12 +78,27 @@ namespace tests
                 .Setup(m => m.Tick(time))
                 .Returns(BehaviourTreeStatus.Running);
 
-            testObject.SetChild(mockChildNode.Object);
+            testObject.AddChild(mockChildNode.Object);
 
             Assert.Equal(BehaviourTreeStatus.Running, testObject.Tick(time));
 
             mockChildNode.Verify(m => m.Tick(time), Times.Once());
         }
+
+        [Fact]
+        public void adding_more_than_a_single_child_throws_exception()
+        {
+            Init();
+
+            var mockChildNode1 = new Mock<IBehaviourTreeNode>();
+            testObject.AddChild(mockChildNode1.Object);
+
+            var mockChildNode2 = new Mock<IBehaviourTreeNode>();
+            Assert.Throws<ApplicationException>(() => 
+                testObject.AddChild(mockChildNode2.Object)
+            );
+        }
+
 
     }
 }

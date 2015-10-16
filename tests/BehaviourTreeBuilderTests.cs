@@ -18,23 +18,66 @@ namespace tests
         }
 
         [Fact]
-        public void can_create_action_node()
+        public void cant_create_an_unested_action_node()
         {
             Init();
 
-            var invokeCount = 0;
+            Assert.Throws<ApplicationException>(() =>
+                {
+                    testObject
+                         .Do("some-node-1", t => BehaviourTreeStatus.Running)
+                         .Build();
+                }
+            );
+        }
+
+        [Fact]
+        public void can_create_inverter_node()
+        {
+            Init();
 
             var node = testObject
-                .Do("some-node", t =>
-                {
-                    ++invokeCount;
-                    return BehaviourTreeStatus.Running;
-                })
+                .Inverter("some-inverter")
+                    .Do("some-node", t =>BehaviourTreeStatus.Success)
+                .End()
                 .Build();
 
-            Assert.IsType<ActionNode>(node);
-            Assert.Equal(BehaviourTreeStatus.Running, node.Tick(new TimeData()));
-            Assert.Equal(1, invokeCount);
+            Assert.IsType<InverterNode>(node);
+            Assert.Equal(BehaviourTreeStatus.Failure, node.Tick(new TimeData()));
         }
+
+        [Fact]
+        public void can_invert_an_inverter()
+        {
+            Init();
+
+            var node = testObject
+                .Inverter("some-inverter")
+                    .Inverter("some-other-inverter")
+                        .Do("some-node", t => BehaviourTreeStatus.Success)
+                    .End()
+                .End()
+                .Build();
+
+            Assert.IsType<InverterNode>(node);
+            Assert.Equal(BehaviourTreeStatus.Success, node.Tick(new TimeData()));
+        }
+
+        [Fact]
+        public void adding_more_than_a_single_child_to_inverter_throws_exception()
+        {
+            Init();
+
+            Assert.Throws<ApplicationException>(() =>
+            {
+                testObject
+                    .Inverter("some-inverter")
+                        .Do("some-node", t => BehaviourTreeStatus.Success)
+                        .Do("some-other-node", t => BehaviourTreeStatus.Success)
+                    .End()
+                    .Build();
+            });
+        }
+
     }
 }

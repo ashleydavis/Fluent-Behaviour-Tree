@@ -8,12 +8,22 @@ namespace fluent_behaviour_tree.Nodes
     /// <summary>
     /// Decorator node that inverts the success/failure of its child.
     /// </summary>
-    public class InverterNode
+    public class InverterNode : IParentBehaviourTreeNode
     {
+        /// <summary>
+        /// Name of the node.
+        /// </summary>
+        private string name;
+
         /// <summary>
         /// The child to be inverted.
         /// </summary>
         private IBehaviourTreeNode childNode;
+
+        public InverterNode(string name)
+        {
+            this.name = name;
+        }
 
         public BehaviourTreeStatus Tick(TimeData time)
         {
@@ -38,11 +48,16 @@ namespace fluent_behaviour_tree.Nodes
         }
 
         /// <summary>
-        /// Set the child to be inverted.
+        /// Add a child to the parent node.
         /// </summary>
-        public void SetChild(IBehaviourTreeNode childNode)
+        public void AddChild(IBehaviourTreeNode child)
         {
-            this.childNode = childNode;
+            if (this.childNode != null)
+            {
+                throw new ApplicationException("Can't add more than a single child to InverterNode!");
+            }
+
+            this.childNode = child;
         }
     }
 }
