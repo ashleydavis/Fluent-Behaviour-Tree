@@ -133,5 +133,31 @@ namespace tests
             Assert.Equal(2, invokeCount);
         }
 
+        [Fact]
+        public void can_create_selector()
+        {
+            Init();
+
+            var invokeCount = 0;
+
+            var parallel = testObject
+                .Selector("some-selector")
+                    .Do("some-action-1", t =>
+                    {
+                        ++invokeCount;
+                        return BehaviourTreeStatus.Failure;
+                    })
+                    .Do("some-action-2", t =>
+                    {
+                        ++invokeCount;
+                        return BehaviourTreeStatus.Success;
+                    })
+                .End()
+                .Build();
+
+            Assert.IsType<SelectorNode>(parallel);
+            Assert.Equal(BehaviourTreeStatus.Success, parallel.Tick(new TimeData()));
+            Assert.Equal(2, invokeCount);
+        }
     }
 }

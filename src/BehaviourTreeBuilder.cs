@@ -85,6 +85,22 @@ namespace fluent_behaviour_tree
         }
 
         /// <summary>
+        /// Create a selector node.
+        /// </summary>
+        public BehaviourTreeBuilder Selector(string name)
+        {
+            var selectorNode = new SelectorNode(name);
+
+            if (parentNodeStack.Count > 0)
+            {
+                parentNodeStack.Peek().AddChild(selectorNode);
+            }
+
+            parentNodeStack.Push(selectorNode);
+            return this;
+        }
+
+        /// <summary>
         /// Build the actual tree.
         /// </summary>
         public IBehaviourTreeNode Build()
