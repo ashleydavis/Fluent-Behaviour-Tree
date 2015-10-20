@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("fluent-behaviour-tree")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("Fluent-Behaviour-Tree")]
+[assembly: AssemblyDescription("C# behaviour tree library with a fluent API")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("fluent-behaviour-tree")]
+[assembly: AssemblyProduct("Fluent-Behaviour-Tree")]
 [assembly: AssemblyCopyright("Copyright ©  2015")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
