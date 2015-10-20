@@ -174,5 +174,57 @@ namespace tests
             Assert.Equal(BehaviourTreeStatus.Success, parallel.Tick(new TimeData()));
             Assert.Equal(2, invokeCount);
         }
+
+        [Fact]
+        public void can_splice_sub_tree()
+        {
+            Init();
+
+            var invokeCount = 0;
+
+            var spliced = testObject
+                .Sequence("spliced")
+                    .Do("test", t =>
+                    {
+                        ++invokeCount;
+                        return BehaviourTreeStatus.Success;
+                    })
+                .End()
+                .Build();
+
+            var tree = testObject
+                .Sequence("parent-tree")
+                    .Splice(spliced)                    
+                .End()
+                .Build();
+
+            tree.Tick(new TimeData());
+
+            Assert.Equal(1, invokeCount);
+        }
+
+        [Fact]
+        public void splicing_an_unnested_sub_tree_throws_exception()
+        {
+            Init();
+
+            var invokeCount = 0;
+
+            var spliced = testObject
+                .Sequence("spliced")
+                    .Do("test", t =>
+                    {
+                        ++invokeCount;
+                        return BehaviourTreeStatus.Success;
+                    })
+                .End()
+                .Build();
+
+            Assert.Throws<ApplicationException>(() =>
+            {
+                testObject
+                    .Splice(spliced);
+            });
+        }
     }
 }

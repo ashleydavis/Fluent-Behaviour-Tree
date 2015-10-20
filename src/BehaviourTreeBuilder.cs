@@ -109,6 +109,25 @@ namespace fluent_behaviour_tree
         }
 
         /// <summary>
+        /// Splice a sub tree into the parent tree.
+        /// </summary>
+        public BehaviourTreeBuilder Splice(IBehaviourTreeNode subTree)
+        {
+            if (subTree == null)
+            {
+                throw new ArgumentNullException("subTree");
+            }
+
+            if (parentNodeStack.Count <= 0)
+            {
+                throw new ApplicationException("Can't splice an unnested sub-tree, there must be a parent-tree.");
+            }
+
+            parentNodeStack.Peek().AddChild(subTree);
+            return this;
+        }
+
+        /// <summary>
         /// Build the actual tree.
         /// </summary>
         public IBehaviourTreeNode Build()
@@ -124,6 +143,5 @@ namespace fluent_behaviour_tree
             curNode = parentNodeStack.Pop();
             return this;
         }
-
     }
 }
