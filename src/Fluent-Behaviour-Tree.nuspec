@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>$id$</id>
+    <version>$version$</version>
+    <title>$title$</title>
+    <authors>$author$</authors>
+    <owners>$author$</owners>
+    <licenseUrl>https://github.com/codecapers/Fluent-Behaviour-Tree</licenseUrl>
+    <projectUrl>https://github.com/codecapers/Fluent-Behaviour-Tree</projectUrl>
+    <iconUrl>https://avatars1.githubusercontent.com/u/8173836?v=3&s=200</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>$description$</description>
+    <releaseNotes></releaseNotes>
+    <copyright>Copyright 2015</copyright>
+    <tags>C# fluent api behaviour behavior tree</tags>
+  </metadata>
+</package>
