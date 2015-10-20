@@ -1,5 +1,5 @@
-# fluent-behaviour-tree
+# Fluent-Behaviour-Tree
 
 C# behaviour tree library with a fluent API
 
-Check back soon for some docs.
+
