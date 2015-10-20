@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("Fluent-Behaviour-Tree")]
 [assembly: AssemblyDescription("C# behaviour tree library with a fluent API")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("Code Capers")]
 [assembly: AssemblyProduct("Fluent-Behaviour-Tree")]
 [assembly: AssemblyCopyright("Copyright ©  2015")]
 [assembly: AssemblyTrademark("")]

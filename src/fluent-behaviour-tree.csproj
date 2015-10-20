@@ -7,8 +7,8 @@
     <ProjectGuid>{41E64A25-7890-4EDD-B405-D907BADCF7EE}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>fluent_behaviour_tree</RootNamespace>
-    <AssemblyName>fluent-behaviour-tree</AssemblyName>
+    <RootNamespace>FluentBehaviourTree</RootNamespace>
+    <AssemblyName>FluentBehaviourTree</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
