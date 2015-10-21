@@ -18,6 +18,20 @@ namespace tests
         }
 
         [Fact]
+        public void cant_create_a_behaviour_tree_with_zero_nodes()
+        {
+            Init();
+
+            Assert.Throws<ApplicationException>(() =>
+                {
+                    testObject
+                         .Build();
+                }
+            );
+
+        }
+
+        [Fact]
         public void cant_create_an_unested_action_node()
         {
             Init();

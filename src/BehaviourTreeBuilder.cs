@@ -132,6 +132,10 @@ namespace fluent_behaviour_tree
         /// </summary>
         public IBehaviourTreeNode Build()
         {
+            if (curNode == null)
+            {
+                throw new ApplicationException("Can't create a behaviour tree with zero nodes");
+            }
             return curNode;
         }
 
