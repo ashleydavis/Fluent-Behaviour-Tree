@@ -24,8 +24,7 @@ namespace tests
 
             Assert.Throws<ApplicationException>(() =>
                 {
-                    testObject
-                         .Build();
+                    testObject.Build();
                 }
             );
 
@@ -58,6 +57,20 @@ namespace tests
 
             Assert.IsType<InverterNode>(node);
             Assert.Equal(BehaviourTreeStatus.Failure, node.Tick(new TimeData()));
+        }
+
+        [Fact]
+        public void cant_create_an_unbalanced_behaviour_tree()
+        {
+            Init();
+
+            Assert.Throws<ApplicationException>(() =>
+            {
+                testObject
+                    .Inverter("some-inverter")
+                    .Do("some-node", t => BehaviourTreeStatus.Success)
+                .Build();
+            });
         }
 
         [Fact]
