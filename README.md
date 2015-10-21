@@ -124,6 +124,17 @@ Runs child nodes in sequence until it finds one that *succeeds*. Succeeds when i
 		})		
 	.End()
 
+
+### Condition
+
+The condition function is syntactic sugar for the *Do* function. It allows return of a boolean value that is then converted to a *success* or *failure*. It is intended to be used with *Selector*.
+
+	.Selector("my-selector")
+		.Condition(t => SomeBooleanCondition())	// Predicate that returns *true* or *false*. 
+		.Do(t => SomeAction())					// Action to run if the predicate evaluates to *true*. 
+	.End()
+
+
 ### Inverter
 
 Inverts the *success* or *failure* of the child node. Continues running while the child node is *running*.
