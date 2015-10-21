@@ -4,11 +4,18 @@ C# behaviour tree library with a fluent API.
 
 ## Understanding Behaviour Trees
 
+Here are some resources to help you understand behaviour trees:
+
+- [Behaviour tree (Wikipedia)](https://en.wikipedia.org/wiki/Behavior_tree_(artificial_intelligence,_robotics_and_control))
+- [Behavior trees for AI: How they work](http://www.gamasutra.com/blogs/ChrisSimpson/20140717/221339/Behavior_trees_for_AI_How_they_work.php)
+- [Understanding Behaviour Trees](http://aigamedev.com/open/article/bt-overview/)
+- [Introduction and implementation of Behaviour Trees](http://guineashots.com/2014/07/25/an-introduction-to-behavior-trees-part-1/)
+
 ## Installation
 
 In the Visual Studio [Package Manager Console](http://docs.nuget.org/consume/package-manager-console):
 
-	PM> Install-package
+	PM> Install-Package FluentBehaviourTree
 
 Or clone or download the code from [the github repository](https://github.com/codecapers/fluent-behaviour-tree).
 
