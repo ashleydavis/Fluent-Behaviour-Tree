@@ -21,7 +21,7 @@ Or clone or download the code from [the github repository](https://github.com/co
 
 ## Creating a Behaviour Tree
 
-A behaviour tree is created thorough the API provided by *BehaviourTreeBuilder*. The tree is return when the *Build* function is called.
+A behaviour tree is created thorough the API provided by *BehaviourTreeBuilder*. The tree is returned when the *Build* function is called.
 
 	using FluentBehaviourTree;
 
@@ -57,7 +57,7 @@ A behaviour tree is created thorough the API provided by *BehaviourTreeBuilder*.
 
 ## Behaviour Tree Status
 
-Each behaviour tree node can return one of the following status codes:
+Behaviour tree nodes return the following status codes:
 
 - *Success*: Whatever the node was doing has finished and succeeded.
 - *Failure*: Whatever the node was doing has finished, but failed.
@@ -104,7 +104,7 @@ Runs all child nodes in parallel. Continues to run until a required number of ch
 
 ### Selector
 
-Runs child nodes in sequence until it finds one that *succeeds*. Succeeds when it finds the first child that succeeds. For child nodes that *fail* it moves forward to the next child node. While a child is *running* it stays on that child node without moving forward. 
+Runs child nodes in sequence until it finds one that *succeeds*. Succeeds when it finds the first child that *succeeds*. For child nodes that *fail* it moves forward to the next child node. While a child is *running* it stays on that child node without moving forward. 
 
 	.Selector("my-selector")
 		.Do(t => 
