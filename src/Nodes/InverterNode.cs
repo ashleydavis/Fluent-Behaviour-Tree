@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace fluent_behaviour_tree
+namespace FluentBehaviourTree
 {
     /// <summary>
     /// Decorator node that inverts the success/failure of its child.

@@ -1,4 +1,4 @@
-﻿using fluent_behaviour_tree;
+﻿using FluentBehaviourTree;
 using Moq;
 using System;
 using System.Collections.Generic;

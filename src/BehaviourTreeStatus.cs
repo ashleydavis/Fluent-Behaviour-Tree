@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace fluent_behaviour_tree
+namespace FluentBehaviourTree
 {
     /// <summary>
     /// The return type when invoking behaviour tree nodes.
