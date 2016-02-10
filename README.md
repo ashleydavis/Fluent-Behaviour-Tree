@@ -65,6 +65,19 @@ Behaviour tree nodes return the following status codes:
 
 ## Node Types
 
+### Action / Leaf-Node
+
+Call the *Do* function to create an action node at the leaves of the behavior tree. 
+
+	.Do(t => 
+	{
+		// ... do something ...
+		// ... query the entity, query the environment then take some action ...
+		return BehaviourTreeStatus.Success;
+	}); 
+
+The return value defines the status of the node. Return *Success*, *Failure* or *Running*.
+
 ### Sequence
 
 Runs each child node in sequence. Fails for the first child node that *fails*. Moves to the next child when the current running child *succeeds*. Stays on the current child node while it returns *running*. Succeeds when all child nodes have succeeded.
