@@ -14,6 +14,8 @@ namespace FluentBehaviourTree
         /// The name of the node.
         /// </summary>
         private string name;
+        // only set if action is from a condition node
+        private bool condition;
 
         /// <summary>
         /// Function to invoke for the action.
@@ -25,11 +27,23 @@ namespace FluentBehaviourTree
         {
             this.name=name;
             this.fn=fn;
+            this.condition = false;
+        }
+
+        public ActionNode(string name, Func<TimeData, BehaviourTreeStatus> fn, bool cond)
+        {
+            this.name = name;
+            this.fn = fn;
+            this.condition = cond;
         }
 
         public BehaviourTreeStatus Tick(TimeData time)
         {
             return fn(time);
+        }
+        public bool isCondition()
+        {
+            return condition;
         }
     }
 }
