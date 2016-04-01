@@ -89,23 +89,20 @@ namespace FluentBehaviourTree
             parentNodeStack.Peek().AddChild(actionNode);
             return this;
         }
-        public BehaviourTreeBuilder Do(string name, Func<TimeData, BehaviourTreeStatus> fn, bool condition)
+       
+        /// <summary>
+        /// Like an action node... but the function can return true/false and is mapped to success/failure.
+        /// </summary>
+        public BehaviourTreeBuilder Condition(string name, Func<TimeData, bool> fn)
         {
             if (parentNodeStack.Count <= 0)
             {
                 throw new ApplicationException("Can't create an unnested ActionNode, it must be a leaf node.");
             }
 
-            var actionNode = new ActionNode(name, fn, condition);
-            parentNodeStack.Peek().AddChild(actionNode);
+            var conditionNode = new ConditionNode(name, fn);
+            parentNodeStack.Peek().AddChild(conditionNode);
             return this;
-        }
-        /// <summary>
-        /// Like an action node... but the function can return true/false and is mapped to success/failure.
-        /// </summary>
-        public BehaviourTreeBuilder Condition(string name, Func<TimeData, bool> fn)
-        {
-            return Do(name, t => fn(t) ? BehaviourTreeStatus.Success : BehaviourTreeStatus.Failure,true);
         }
 
         /// <summary>
@@ -174,7 +171,22 @@ namespace FluentBehaviourTree
             parentNodeStack.Push(selectorNode);
             return this;
         }
+        /// <summary>
+        /// Create a Randomized Selector node.
+        /// </summary>
+        public BehaviourTreeBuilder RandomSelector(string name)
+        {
+            //pruneStack();
+            var selectorNode = new SelectorNode(name,true);
 
+            if (parentNodeStack.Count > 0)
+            {
+                parentNodeStack.Peek().AddChild(selectorNode);
+            }
+
+            parentNodeStack.Push(selectorNode);
+            return this;
+        }
         /// <summary>
         /// Splice a sub tree into the parent tree.
         /// </summary>
