@@ -21,7 +21,7 @@ Or clone or download the code from [the github repository](https://github.com/co
 
 ## Creating a Behaviour Tree
 
-A behaviour tree is created thorough the API provided by *BehaviourTreeBuilder*. The tree is returned when the *Build* function is called.
+A behaviour tree is created through *BehaviourTreeBuilder*. The tree is returned when the *Build* function is called.
 
 	using FluentBehaviourTree;
 
@@ -59,9 +59,9 @@ A behaviour tree is created thorough the API provided by *BehaviourTreeBuilder*.
 
 Behaviour tree nodes return the following status codes:
 
-- *Success*: Whatever the node was doing has finished and succeeded.
-- *Failure*: Whatever the node was doing has finished, but failed.
-- *Running*: Whatever the node is doing is still in progress. 
+* *Success*: The node has finished what it was doing and succeeded.
+* *Failure*: The node has finished, but failed.
+* *Running*: The node is still working on something. 
 
 ## Node Types
 
