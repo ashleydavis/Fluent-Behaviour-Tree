@@ -2,6 +2,8 @@
 
 C# behaviour tree library with a fluent API.
 
+For a background and walk-through please see [the accompanying article](http://www.what-could-possibly-go-wrong.com/fluent-behavior-trees-for-ai-and-game-logic/). 
+
 ## Understanding Behaviour Trees
 
 Here are some resources to help you understand behaviour trees:
