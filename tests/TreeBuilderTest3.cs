@@ -74,7 +74,11 @@ namespace tests
             Assert.Equal(FevalActionTrue, callData[sel1Condition + deltaTime]);
 
             // the actions will be random and there is a 1/12 chance that it could be the 1st one
+            // and may cause the unit test to fail. This line should be commented out for automated
+            // unit testing.
             Assert.False(callData.ContainsKey(sel1Action1 + deltaTime));
+
+            // check that exactly only one action was triggered ...
             int numTriggered = 0;
             if (callData.ContainsKey(sel1Action1 + deltaTime))  ++numTriggered;
             if (callData.ContainsKey(sel1Action2 + deltaTime))  ++numTriggered;
