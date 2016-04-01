@@ -30,15 +30,20 @@ namespace FluentBehaviourTree
         // should have  selector behaviour applied unless the first one is a condition Action.
         public BehaviourTreeStatus Tick(TimeData time)
         {
-            // check if this is a conditional action
-            ActionNode firstChild = (ActionNode) children[0];
+            
             int skipOne = 0;
-            if (firstChild.isCondition())
+            // check if this is a conditional action
+            IBehaviourTreeNode firstNode = children[0];
+            if (firstNode is ActionNode)
             {
-                var status = firstChild.Tick(time);
-                if (status != BehaviourTreeStatus.Success)
-                    return BehaviourTreeStatus.Success;
-                ++skipOne;
+                ActionNode firstChild = (ActionNode) firstNode;
+                if (firstChild.isCondition())
+                {
+                    var status = firstChild.Tick(time);
+                    if (status != BehaviourTreeStatus.Success)
+                        return BehaviourTreeStatus.Success;
+                    ++skipOne;
+                }
             }
             
             foreach (var child in children.Skip(skipOne))

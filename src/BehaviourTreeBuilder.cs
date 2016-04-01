@@ -203,6 +203,12 @@ namespace FluentBehaviourTree
             {
                 throw new ApplicationException("Can't create a behaviour tree with zero nodes");
             }
+           
+           if (curNode == null)
+            {
+                throw new ApplicationException("Can't create an unbalanced tree");
+            }
+
             while (parentNodeStack.Count > 0)
             {
                 curNode = parentNodeStack.Pop();
@@ -223,6 +229,9 @@ namespace FluentBehaviourTree
         {
             if (parentNodeStack.Count > 1)
                 curNode = parentNodeStack.Pop();
+            else
+            if (parentNodeStack.Count == 1)
+                curNode = parentNodeStack.Peek();
 
         }
     }
