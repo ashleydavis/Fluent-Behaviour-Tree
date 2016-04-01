@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Xunit;
+using System.Diagnostics;
+using System.Reflection;
 
 namespace tests
 {
@@ -43,7 +45,7 @@ namespace tests
 
                     .Selector("Selector-With-Condition")
                         .Condition("Selector1-Condition", t => { return evalActionTrue(t); })
-                            .Do("Selector1-Action1", t => { return actionFail(t, "Selector 1 - Action 1"); })
+                            .Do("Selector1-Action1", t => { return actionFail(t,    "Selector 1 - Action 1"); })
                             .Do("Selector1-Action2", t => { return actionSuccess(t, "Selector 1 - Action 2"); })
                             .Do("Selector1-Action3", t => { return actionSuccess(t, "Selector 1 - Action 3"); })
                         .End()
@@ -81,21 +83,47 @@ namespace tests
         }
         public bool evalActionTrue(TimeData t)
         {
+            StackFrame frame = new StackFrame(1);
+            string methodName = frame.GetMethod().Name; //Gets the current method name
+            MethodBase method = frame.GetMethod();
+            string className = method.DeclaringType.Name; //Gets the current class name
+            string caller = className + "." + methodName;
+            string thismethod = this.GetType().ToString() + "." + MethodBase.GetCurrentMethod().Name;
+            Console.WriteLine("in " + thismethod + " : Caller: " + caller);
             return true;
         }
         public bool evalActionFalse(TimeData t)
         {
+            StackFrame frame = new StackFrame(1);
+            string methodName = frame.GetMethod().Name; //Gets the current method name
+            MethodBase method = frame.GetMethod();
+            string className = method.DeclaringType.Name; //Gets the current class name
+            string caller = className + "." + methodName;
+            string thismethod = this.GetType().ToString() + "." + MethodBase.GetCurrentMethod().Name;
+            Console.WriteLine("in " + thismethod + " : Caller: " + caller);
             return false;
         }
         public BehaviourTreeStatus actionSuccess(TimeData t, string aValue)
         {
-            //Console.WriteLine(aValue+" at Delta time:"+t.deltaTime);
+            StackFrame frame = new StackFrame(1);
+            string methodName = frame.GetMethod().Name; //Gets the current method name
+            MethodBase method = frame.GetMethod();
+            string className = method.DeclaringType.Name; //Gets the current class name
+            string caller = className + "." + methodName;
+            string thismethod = this.GetType().ToString() + "." + MethodBase.GetCurrentMethod().Name;
+            Console.WriteLine("in " + thismethod + " : Caller: " + caller);
             Console.WriteLine(aValue + " --> Action Successful ! at Delta time:" + t.deltaTime);
             return BehaviourTreeStatus.Success;
         }
         public BehaviourTreeStatus actionFail(TimeData t, string aValue)
         {
-            // Console.WriteLine(aValue+ " at Delta time:"+t.deltaTime);
+            StackFrame frame = new StackFrame(1);
+            string methodName = frame.GetMethod().Name; //Gets the current method name
+            MethodBase method = frame.GetMethod();
+            string className = method.DeclaringType.Name; //Gets the current class name
+            string caller = className + "." + methodName;
+            string thismethod = this.GetType().ToString() + "." + MethodBase.GetCurrentMethod().Name;
+            Console.WriteLine("in " + thismethod + " : Caller: " + caller);
             Console.WriteLine(aValue + " --> Action Failed ! at Delta time:" + t.deltaTime);
             //throw new ApplicationException("Node Failure to Execute !!");
             return BehaviourTreeStatus.Failure;
