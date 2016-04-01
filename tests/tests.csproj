@@ -59,6 +59,7 @@
     <Compile Include="SequenceNodeTests.cs" />
     <Compile Include="TreeBuilderTest1.cs" />
     <Compile Include="TreeBuilderTest2.cs" />
+    <Compile Include="TreeBuilderTest3.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
