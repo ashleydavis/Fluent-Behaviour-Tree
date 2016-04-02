@@ -8,7 +8,7 @@ namespace FluentBehaviourTree
     /// <summary>
     /// A behaviour tree leaf node for running an action.
     /// </summary>
-    public class ConditionNode : IBehaviourTreeNode
+    public class ConditionNode : BaseNode,IBehaviourTreeNode
     {
         /// <summary>
         /// The name of the node.
@@ -26,9 +26,9 @@ namespace FluentBehaviourTree
             this.fn = fn; 
         }
         
-        public BehaviourTreeStatus Tick(TimeData time)
+        public IEnumerator<BehaviourTreeStatus> Tick(TimeData time)
         {
-            return fn(time) ? BehaviourTreeStatus.Success : BehaviourTreeStatus.Failure;
+            yield return fn(time) ? BehaviourTreeStatus.Success : BehaviourTreeStatus.Failure;
         }
        
     }

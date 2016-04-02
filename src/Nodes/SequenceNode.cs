@@ -8,7 +8,7 @@ namespace FluentBehaviourTree
     /// <summary>
     /// Runs child nodes in sequence, until one fails.
     /// </summary>
-    public class SequenceNode : IParentBehaviourTreeNode
+    public class SequenceNode : BaseNode, IParentBehaviourTreeNode
     {
         /// <summary>
         /// Name of the node.
@@ -25,18 +25,20 @@ namespace FluentBehaviourTree
             this.name = name;
         }
 
-        public BehaviourTreeStatus Tick(TimeData time)
+        public IEnumerator<BehaviourTreeStatus> Tick(TimeData time)
         {
             foreach (var child in children)
             {
                 var childStatus = child.Tick(time);
-                if (childStatus != BehaviourTreeStatus.Success)
+                childStatus.MoveNext();
+                if (childStatus.Current != BehaviourTreeStatus.Success)
                 {
-                    return childStatus;
+                    yield return childStatus.Current;
+                    yield break;
                 }
             }
 
-            return BehaviourTreeStatus.Success;
+            yield return BehaviourTreeStatus.Success;
         }
 
         /// <summary>

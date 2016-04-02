@@ -13,6 +13,6 @@ namespace FluentBehaviourTree
         /// <summary>
         /// Update the time of the behaviour tree.
         /// </summary>
-        BehaviourTreeStatus Tick(TimeData time);
+        IEnumerator<BehaviourTreeStatus> Tick(TimeData time);
     }
 }

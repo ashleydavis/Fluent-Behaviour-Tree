@@ -8,7 +8,7 @@ namespace FluentBehaviourTree
     /// <summary>
     /// Decorator node that inverts the success/failure of its child.
     /// </summary>
-    public class InverterNode : IParentBehaviourTreeNode
+    public class InverterNode : BaseNode, IParentBehaviourTreeNode
     {
         /// <summary>
         /// Name of the node.
@@ -25,7 +25,7 @@ namespace FluentBehaviourTree
             this.name = name;
         }
 
-        public BehaviourTreeStatus Tick(TimeData time)
+        public IEnumerator<BehaviourTreeStatus> Tick(TimeData time)
         {
             if (childNode == null)
             {
@@ -33,17 +33,21 @@ namespace FluentBehaviourTree
             }
 
             var result = childNode.Tick(time);
-            if (result == BehaviourTreeStatus.Failure)
+            result.MoveNext();
+            if (result.Current == BehaviourTreeStatus.Failure)
             {
-                return BehaviourTreeStatus.Success;
+               yield return BehaviourTreeStatus.Success;
+               yield break;
             }
-            else if (result == BehaviourTreeStatus.Success)
+            else if (result.Current == BehaviourTreeStatus.Success)
             {
-                return BehaviourTreeStatus.Failure;
+               yield return BehaviourTreeStatus.Failure;
+               yield break;
             }
             else
             {
-                return result;
+                yield return result.Current;
+                yield break;
             }
         }
 

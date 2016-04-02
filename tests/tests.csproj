@@ -52,6 +52,7 @@
   <ItemGroup>
     <Compile Include="ActionNodeTests.cs" />
     <Compile Include="BehaviourTreeBuilderTests.cs" />
+    <Compile Include="CoroutineTest.cs" />
     <Compile Include="InverterNodeTests.cs" />
     <Compile Include="ParallelNodeTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

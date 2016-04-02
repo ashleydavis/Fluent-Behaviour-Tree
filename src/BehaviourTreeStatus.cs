@@ -10,8 +10,19 @@ namespace FluentBehaviourTree
     /// </summary>
     public enum BehaviourTreeStatus
     {
+        Completed,
+        Initial,
         Success,
         Failure,
         Running
+    }
+    public class TreeStatus
+    {
+        public static IEnumerator<BehaviourTreeStatus> getStatus(BehaviourTreeStatus aStatus)
+        {
+            List<BehaviourTreeStatus> status = new List<BehaviourTreeStatus>();
+            status.Add(aStatus);
+            return status.GetEnumerator();
+        }
     }
 }

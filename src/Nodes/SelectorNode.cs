@@ -8,7 +8,7 @@ namespace FluentBehaviourTree
     /// <summary>
     /// Selects the first node that succeeds. Tries successive nodes until it finds one that doesn't fail.
     /// </summary>
-    public class SelectorNode : IParentBehaviourTreeNode
+    public class SelectorNode : BaseNode, IParentBehaviourTreeNode
     {
         /// <summary>
         /// The name of the node.
@@ -31,7 +31,7 @@ namespace FluentBehaviourTree
         // A Selector may be contaminated with other nodes (Condition) or IParentBeahviourTreeNodes over which
         // it's behaviour as a selector is applied. The assumption here is that any item in it's child list
         // should have  selector behaviour applied unless the first one is a condition Action.
-        public BehaviourTreeStatus Tick(TimeData time)
+        public IEnumerator<BehaviourTreeStatus> Tick(TimeData time)
         {
             
             int skipOne = 0;
@@ -41,8 +41,9 @@ namespace FluentBehaviourTree
             {
                 ConditionNode firstChild = (ConditionNode) firstNode;
                 var status = firstChild.Tick(time);
-                if (status != BehaviourTreeStatus.Success)
-                    return BehaviourTreeStatus.Success;
+                status.MoveNext();
+                if (status.Current != BehaviourTreeStatus.Success)
+                    yield return BehaviourTreeStatus.Failure;
                 ++skipOne; 
             }
 
@@ -53,13 +54,15 @@ namespace FluentBehaviourTree
             foreach (var child in remainingChildren)
             {
                 var childStatus = child.Tick(time);
-                if (childStatus != BehaviourTreeStatus.Failure)
+                childStatus.MoveNext();
+                if (childStatus.Current != BehaviourTreeStatus.Failure)
                 {
-                    return childStatus;
+                    yield return childStatus.Current;
+                    yield break;
                 }
             }
 
-            return BehaviourTreeStatus.Failure;
+            yield return BehaviourTreeStatus.Failure;
         }
 
         /// <summary>

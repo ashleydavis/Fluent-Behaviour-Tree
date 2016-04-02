@@ -29,7 +29,7 @@ namespace tests
             var mockChild1 = new Mock<IBehaviourTreeNode>();
             mockChild1
                 .Setup(m => m.Tick(time))
-                .Returns(BehaviourTreeStatus.Running)
+                .Returns(TreeStatus.getStatus(BehaviourTreeStatus.Running))
                 .Callback(() =>
                 {
                     Assert.Equal(1, ++callOrder);
@@ -38,7 +38,7 @@ namespace tests
             var mockChild2 = new Mock<IBehaviourTreeNode>();
             mockChild2
                 .Setup(m => m.Tick(time))
-                .Returns(BehaviourTreeStatus.Running)
+                .Returns(TreeStatus.getStatus(BehaviourTreeStatus.Running))
                 .Callback(() =>
                  {
                      Assert.Equal(2, ++callOrder);
@@ -46,8 +46,10 @@ namespace tests
 
             testObject.AddChild(mockChild1.Object);
             testObject.AddChild(mockChild2.Object);
-
-            Assert.Equal(BehaviourTreeStatus.Running, testObject.Tick(time));
+            
+            var e = testObject.Tick(time);
+            e.MoveNext();
+            Assert.Equal(BehaviourTreeStatus.Running, e.Current);
 
             Assert.Equal(2, callOrder);
 
@@ -65,23 +67,24 @@ namespace tests
             var mockChild1 = new Mock<IBehaviourTreeNode>();
             mockChild1
                 .Setup(m => m.Tick(time))
-                .Returns(BehaviourTreeStatus.Failure);
+                .Returns(TreeStatus.getStatus(BehaviourTreeStatus.Failure));
 
             var mockChild2 = new Mock<IBehaviourTreeNode>();
             mockChild2
                 .Setup(m => m.Tick(time))
-                .Returns(BehaviourTreeStatus.Failure);
+                .Returns(TreeStatus.getStatus(BehaviourTreeStatus.Failure));
 
             var mockChild3 = new Mock<IBehaviourTreeNode>();
             mockChild3
                 .Setup(m => m.Tick(time))
-                .Returns(BehaviourTreeStatus.Running);
+                .Returns(TreeStatus.getStatus(BehaviourTreeStatus.Running));
 
             testObject.AddChild(mockChild1.Object);
             testObject.AddChild(mockChild2.Object);
-            testObject.AddChild(mockChild3.Object);
-
-            Assert.Equal(BehaviourTreeStatus.Failure, testObject.Tick(time));
+            testObject.AddChild(mockChild3.Object); 
+            var e = testObject.Tick(time);
+            e.MoveNext();
+            Assert.Equal(BehaviourTreeStatus.Failure, e.Current);
 
             mockChild1.Verify(m => m.Tick(time), Times.Once());
             mockChild2.Verify(m => m.Tick(time), Times.Once());
@@ -98,23 +101,25 @@ namespace tests
             var mockChild1 = new Mock<IBehaviourTreeNode>();
             mockChild1
                 .Setup(m => m.Tick(time))
-                .Returns(BehaviourTreeStatus.Success);
+                .Returns(TreeStatus.getStatus(BehaviourTreeStatus.Success));
 
             var mockChild2 = new Mock<IBehaviourTreeNode>();
             mockChild2
                 .Setup(m => m.Tick(time))
-                .Returns(BehaviourTreeStatus.Success);
+                .Returns(TreeStatus.getStatus(BehaviourTreeStatus.Success));
 
             var mockChild3 = new Mock<IBehaviourTreeNode>();
             mockChild3
                 .Setup(m => m.Tick(time))
-                .Returns(BehaviourTreeStatus.Running);
+                .Returns(TreeStatus.getStatus(BehaviourTreeStatus.Running));
 
             testObject.AddChild(mockChild1.Object);
             testObject.AddChild(mockChild2.Object);
             testObject.AddChild(mockChild3.Object);
-
-            Assert.Equal(BehaviourTreeStatus.Success, testObject.Tick(time));
+             
+            var e = testObject.Tick(time);
+            e.MoveNext();
+            Assert.Equal(BehaviourTreeStatus.Success,e.Current);
 
             mockChild1.Verify(m => m.Tick(time), Times.Once());
             mockChild2.Verify(m => m.Tick(time), Times.Once());
@@ -131,17 +136,20 @@ namespace tests
             var mockChild1 = new Mock<IBehaviourTreeNode>();
             mockChild1
                 .Setup(m => m.Tick(time))
-                .Returns(BehaviourTreeStatus.Success);
+                .Returns(TreeStatus.getStatus(BehaviourTreeStatus.Success));
 
             var mockChild2 = new Mock<IBehaviourTreeNode>();
             mockChild2
                 .Setup(m => m.Tick(time))
-                .Returns(BehaviourTreeStatus.Failure);
+                .Returns(TreeStatus.getStatus(BehaviourTreeStatus.Failure));
 
             testObject.AddChild(mockChild1.Object);
             testObject.AddChild(mockChild2.Object);
+            
+            var e = testObject.Tick(time);
+            e.MoveNext();
 
-            Assert.Equal(BehaviourTreeStatus.Running, testObject.Tick(time));
+            Assert.Equal(BehaviourTreeStatus.Running, e.Current);
 
             mockChild1.Verify(m => m.Tick(time), Times.Once());
             mockChild2.Verify(m => m.Tick(time), Times.Once());

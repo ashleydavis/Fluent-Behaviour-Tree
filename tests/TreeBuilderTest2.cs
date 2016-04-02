@@ -49,7 +49,8 @@ namespace tests
             float deltaTime = 523.4f;
             Init();
             initTree1();
-            btree1.Tick(new TimeData(deltaTime));
+            var e = btree1.Tick(new TimeData(deltaTime));
+            e.MoveNext();
             // Check callData to ensure leaf node was invoked by the Tick.
 
             // Check Sequence 1 Actions
@@ -79,7 +80,8 @@ namespace tests
             float deltaTime = 123.87f;
             Init();
             initTree2();
-            btree2.Tick(new TimeData(deltaTime));
+            var e= btree2.Tick(new TimeData(deltaTime));
+            e.MoveNext();
             // Check callData to ensure leaf node was invoked by the Tick.
 
             // Check Sequence 1 Actions
@@ -235,7 +237,7 @@ namespace tests
             callData.Add(aValue + t.deltaTime, FevalActionFalse);
             return false;
         }
-        public BehaviourTreeStatus actionSuccess(TimeData t, string aValue)
+        public IEnumerator<BehaviourTreeStatus> actionSuccess(TimeData t, string aValue)
         {
             StackFrame frame = new StackFrame(2);
             string methodName = frame.GetMethod().Name; //Gets the current method name
@@ -246,9 +248,9 @@ namespace tests
             Console.WriteLine("in " + thismethod + " : Caller: " + caller);
             Console.WriteLine(aValue + " --> Action Successful ! at Delta time:" + t.deltaTime);
             callData.Add(aValue + t.deltaTime, FactionSuccess);
-            return BehaviourTreeStatus.Success;
+            yield return BehaviourTreeStatus.Success;
         }
-        public BehaviourTreeStatus actionFail(TimeData t, string aValue)
+        public IEnumerator<BehaviourTreeStatus> actionFail(TimeData t, string aValue)
         {
             StackFrame frame = new StackFrame(2);
             string methodName = frame.GetMethod().Name; //Gets the current method name
@@ -260,7 +262,7 @@ namespace tests
             Console.WriteLine(aValue + " --> Action Failed ! at Delta time:" + t.deltaTime);
             //throw new ApplicationException("Node Failure to Execute !!");
             callData.Add(aValue + t.deltaTime, FactionFail);
-            return BehaviourTreeStatus.Failure;
+            yield return BehaviourTreeStatus.Failure;
         }
 
 

@@ -15,19 +15,22 @@ namespace tests
             var time = new TimeData();
 
             var invokeCount = 0;
+            IEnumerable<BehaviourTreeStatus> statusValues = Enum.GetValues(typeof(BehaviourTreeStatus)).Cast<BehaviourTreeStatus>();
+            statusValues.GetEnumerator();
             var testObject = 
                 new ActionNode(
                     "some-action", 
                     t =>
                     {
                         Assert.Equal(time, t);
-
                         ++invokeCount;
-                        return BehaviourTreeStatus.Running;
+                        return TreeStatus.getStatus(BehaviourTreeStatus.Running);
                     }
                 );
 
-            Assert.Equal(BehaviourTreeStatus.Running, testObject.Tick(time));
+            var e = testObject.Tick(time);
+            e.MoveNext();
+            Assert.Equal(BehaviourTreeStatus.Running,e.Current);
             Assert.Equal(1, invokeCount);            
         }
     }

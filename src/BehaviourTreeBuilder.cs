@@ -78,7 +78,7 @@ namespace FluentBehaviourTree
         /// <summary>
         /// Create an action node.
         /// </summary>
-        public BehaviourTreeBuilder Do(string name, Func<TimeData, BehaviourTreeStatus> fn)
+        public BehaviourTreeBuilder Do(string name, Func<TimeData, IEnumerator<BehaviourTreeStatus>> fn)
         {
             if (parentNodeStack.Count <= 0)
             {
