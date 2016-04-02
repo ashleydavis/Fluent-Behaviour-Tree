@@ -124,7 +124,7 @@ namespace tests
                         {
                             return actionSuccess(t, seq1Action2);
                         })
-
+                    .End()
                     .RandomSelector("Random-Selector1-With-Condition")
                         .Condition(sel1Condition, t => { return evalActionTrue(t, sel1Condition); })
                             .Do(sel1Action1, t => { return actionSuccess(t,    sel1Action1); })
@@ -140,7 +140,7 @@ namespace tests
                             .Do(sel1Action11, t => { return actionSuccess(t, sel1Action11); })
                             .Do(sel1Action12, t => { return actionSuccess(t, sel1Action12); })
                     .End()
-                    .End()
+                    
                     .Selector("Normal-Selector2-With-Condition")
                         .Condition(sel2Condition, t => { return evalActionTrue(t, sel2Condition); })
                             .Do(sel2Action1, t => { return actionFail(t, sel2Action1); })
