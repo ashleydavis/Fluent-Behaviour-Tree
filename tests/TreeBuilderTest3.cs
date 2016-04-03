@@ -21,16 +21,16 @@ namespace tests
         string sel1Condition = "Selector1Condition";
         string sel1Action1 = "Selector1Action1";
         string sel1Action2 = "Selector1Action2";
-        string sel1Action3 = "Selector1Action4";
-        string sel1Action4 = "Selector1Action5";
-        string sel1Action5 = "Selector1Action6";
-        string sel1Action6 = "Selector1Action7";
-        string sel1Action7 = "Selector1Action8";
-        string sel1Action8 = "Selector1Action9";
-        string sel1Action9 = "Selector1Action10";
-        string sel1Action10 = "Selector1Action11";
-        string sel1Action11 = "Selector1Action12";
-        string sel1Action12 = "Selector1Action13";
+        string sel1Action3 = "Selector1Action3";
+        string sel1Action4 = "Selector1Action4";
+        string sel1Action5 = "Selector1Action5";
+        string sel1Action6 = "Selector1Action6";
+        string sel1Action7 = "Selector1Action7";
+        string sel1Action8 = "Selector1Action8";
+        string sel1Action9 = "Selector1Action9";
+        string sel1Action10 = "Selector1Action10";
+        string sel1Action11 = "Selector1Action11";
+        string sel1Action12 = "Selector1Action12";
 
         string sel2Condition = "Selector2Condition";
         string sel2Action1 = "Selector2Action1";

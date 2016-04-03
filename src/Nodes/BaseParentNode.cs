@@ -48,7 +48,7 @@ namespace FluentBehaviourTree
         {
             StringBuilder builder = new StringBuilder();
             builder.Append(base.getTreeAsString(prefix));
-            prefix += prefix;
+            prefix += treePrefix;
             foreach (var child in children) {
                 builder.Append(child.getTreeAsString(prefix));
             }

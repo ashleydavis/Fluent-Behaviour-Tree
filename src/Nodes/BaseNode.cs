@@ -10,6 +10,7 @@ namespace FluentBehaviourTree {
         public BehaviourTreeStatus currentStatus { get; set; }
         public IBehaviourTreeNode parent { get; set; }
         public Dictionary<string,IBehaviourTreeNode> nodeMap { get; set; }
+        public static readonly string treePrefix = " --> ";
         /// <summary>
         /// The name of the node.
         /// </summary>

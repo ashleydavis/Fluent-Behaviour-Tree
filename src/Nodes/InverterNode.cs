@@ -88,7 +88,7 @@ namespace FluentBehaviourTree
         {
             StringBuilder builder = new StringBuilder();
             builder.Append(base.getTreeAsString(prefix));
-            prefix += prefix;
+            prefix += treePrefix;
             builder.Append(childNode.getTreeAsString(prefix));   
             return builder.ToString();
         }
