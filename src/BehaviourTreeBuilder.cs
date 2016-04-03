@@ -69,6 +69,7 @@ namespace FluentBehaviourTree
         /// Last node created.
         /// </summary>
         private IBehaviourTreeNode curNode = null;
+        private Dictionary<string, IBehaviourTreeNode> nodeMap = new Dictionary<string, IBehaviourTreeNode>();
 
         /// <summary>
         /// Stack node nodes that we are build via the fluent API.
@@ -87,6 +88,7 @@ namespace FluentBehaviourTree
 
             var actionNode = new ActionNode(name, fn);
             parentNodeStack.Peek().AddChild(actionNode);
+            nodeMap.Add(name, actionNode);
             return this;
         }
        
@@ -102,6 +104,7 @@ namespace FluentBehaviourTree
 
             var conditionNode = new ConditionNode(name, fn);
             parentNodeStack.Peek().AddChild(conditionNode);
+            nodeMap.Add(name, conditionNode);
             return this;
         }
 
@@ -119,6 +122,7 @@ namespace FluentBehaviourTree
             }
             
             parentNodeStack.Push(inverterNode);
+            nodeMap.Add(name, inverterNode);
             return this;
         }
 
@@ -135,6 +139,7 @@ namespace FluentBehaviourTree
             }
            
             parentNodeStack.Push(sequenceNode);
+            nodeMap.Add(name, sequenceNode);
             return this;
         }
 
@@ -152,6 +157,7 @@ namespace FluentBehaviourTree
             }
            
             parentNodeStack.Push(parallelNode);
+            nodeMap.Add(name, parallelNode);
             return this;
         }
 
@@ -169,6 +175,7 @@ namespace FluentBehaviourTree
             }
            
             parentNodeStack.Push(selectorNode);
+            nodeMap.Add(name, selectorNode);
             return this;
         }
         /// <summary>
@@ -185,6 +192,7 @@ namespace FluentBehaviourTree
             }
 
             parentNodeStack.Push(selectorNode);
+            nodeMap.Add(name, selectorNode);
             return this;
         }
         /// <summary>
@@ -203,6 +211,9 @@ namespace FluentBehaviourTree
             }
 
             parentNodeStack.Peek().AddChild(subTree);
+            // Merge the nodeMaps and set subtree nodemap to null
+            nodeMap = nodeMap.Union(subTree.nodeMap).ToDictionary(k => k.Key, v => v.Value);
+            subTree.nodeMap = null;
             return this;
         }
 
@@ -226,6 +237,7 @@ namespace FluentBehaviourTree
                 curNode = parentNodeStack.Pop();
                 // process value
             }
+            curNode.nodeMap = nodeMap;
             return curNode;
         }
 

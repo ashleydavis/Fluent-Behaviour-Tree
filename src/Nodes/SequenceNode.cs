@@ -5,21 +5,11 @@ namespace FluentBehaviourTree
     /// <summary>
     /// Runs child nodes in sequence, until one fails.
     /// </summary>
-    public class SequenceNode : BaseNode, IParentBehaviourTreeNode
+    public class SequenceNode : BaseParentNode, IParentBehaviourTreeNode
     {
-        /// <summary>
-        /// Name of the node.
-        /// </summary>
-        private string name;
-
-        /// <summary>
-        /// List of child nodes.
-        /// </summary>
-        private List<IBehaviourTreeNode> children = new List<IBehaviourTreeNode>(); //todo: this could be optimized as a baked array.
-
-        public SequenceNode(string name)
+      
+        public SequenceNode(string name):base(name)
         {
-            this.name = name;
         }
 
         public IEnumerator<BehaviourTreeStatus> Tick(TimeData time)
@@ -29,41 +19,30 @@ namespace FluentBehaviourTree
                 var childStatus = child.Tick(time);
                 childStatus.MoveNext();
                 currentStatus = childStatus.Current;
+
+                if (isRunning())
+                {
+                    // keep looping until we exit running mode or we
+                    // run out of enum values.
+                    yield return currentStatus;
+                    while (childStatus.MoveNext())
+                    {
+                        currentStatus = childStatus.Current;
+                        if (!isRunning())
+                            break;
+                    }
+                }
                 if (isFailed())
                 {
                     yield return currentStatus;
                     yield break;
                 }
-                else if (isRunning())
-                {
-                    yield return currentStatus;
-                    while (childStatus.MoveNext())
-                    {
-                        currentStatus = childStatus.Current;
-                        if (isComplete())
-                        {
-                            yield return currentStatus;
-                            yield break;
-                        }
-                    }
-                    // if failed exit and return status
-                    if (isFailed())
-                    {
-                        yield return currentStatus;
-                        yield break;
-                    }
-                }
+               
             }
 
             yield return currentStatus;
         }
 
-        /// <summary>
-        /// Add a child to the sequence.
-        /// </summary>
-        public void AddChild(IBehaviourTreeNode child)
-        {
-            children.Add(child);
-        }
+        
     }
 }

@@ -144,7 +144,6 @@ namespace tests
                     })
                 .End()
                 .Build();
-            int i = 0;
             IEnumerator<BehaviourTreeStatus> e = sequence.Tick(new TimeData());
             e.MoveNext();
             Assert.IsType<SequenceNode>(sequence);

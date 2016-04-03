@@ -73,6 +73,9 @@ namespace tests
             Assert.False(callData.ContainsKey(seq2Action2 + deltaTime));
             Assert.False(callData.ContainsKey(seq2Action3 + deltaTime));
 
+            Console.WriteLine(" Btree1 Hierarchy --> ");
+            Console.WriteLine(btree1.getTreeAsString(" --> "));
+
         }
         [Fact]
         public void testTreeWithSequenceSelectorSequenceWithEndAfterEachParent()
@@ -103,6 +106,9 @@ namespace tests
             Assert.Equal(FactionSuccess,callData[seq2Action1 + deltaTime]);
             Assert.Equal(FactionSuccess,callData[seq2Action2 + deltaTime]);
             Assert.Equal(FactionSuccess,callData[seq2Action3 + deltaTime]);
+
+            Console.WriteLine(" Btree2 Hierarchy --> ");
+            Console.WriteLine(btree2.getTreeAsString(" --> "));
         }
         void initTree1()
         {

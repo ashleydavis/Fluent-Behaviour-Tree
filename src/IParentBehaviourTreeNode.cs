@@ -11,8 +11,9 @@ namespace FluentBehaviourTree
     public interface IParentBehaviourTreeNode : IBehaviourTreeNode
     {
         /// <summary>
-        /// Add a child to the parent node.
+        ///  Add a child to the parent node.
         /// </summary>
+        /// <param name="child"></param>
         void AddChild(IBehaviourTreeNode child);
     }
 }

@@ -10,23 +10,16 @@ namespace FluentBehaviourTree
     /// </summary>
     public class ActionNode : BaseNode,IBehaviourTreeNode
     {
-        /// <summary>
-        /// The name of the node.
-        /// </summary>
-        private string name;
-      
-
+       
         /// <summary>
         /// Function to invoke for the action.
         /// </summary>
         private Func<TimeData, IEnumerator<BehaviourTreeStatus>> fn;
         
 
-        public ActionNode(string name, Func<TimeData, IEnumerator<BehaviourTreeStatus>> fn)
-        {
-            this.name=name;
+        public ActionNode(string name, Func<TimeData, IEnumerator<BehaviourTreeStatus>> fn): base(name)
+        {   
             this.fn=fn;
-          
         }
 
         public IEnumerator<BehaviourTreeStatus> Tick(TimeData time)
@@ -35,6 +28,8 @@ namespace FluentBehaviourTree
             {
                 currentStatus = e.Current;
                 yield return currentStatus;
+                // this will continue looping until complete and as long as
+                // the function returns another enumerated value that is not success or failure
                 if (isComplete())
                     yield break;
             }

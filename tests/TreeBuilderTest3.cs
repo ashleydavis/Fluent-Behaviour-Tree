@@ -13,7 +13,6 @@ namespace tests
     {
         BehaviourTreeBuilder treeBuilder2;
         IBehaviourTreeNode btree1;
-        IBehaviourTreeNode btree2;
         Dictionary<string, string> callData;
 
         string seq1Action1 = "Sequence1Action1";
@@ -109,6 +108,9 @@ namespace tests
             Assert.False(callData.ContainsKey(sel2Action10 + deltaTime));
             Assert.False(callData.ContainsKey(sel2Action11 + deltaTime));
             Assert.False(callData.ContainsKey(sel2Action12 + deltaTime));
+
+            Console.WriteLine(" Btree1 Hierarchy --> ");
+            Console.WriteLine(btree1.getTreeAsString(" --> "));
         }
       
         void initTree1()

@@ -8,21 +8,16 @@ namespace FluentBehaviourTree
     /// <summary>
     /// A behaviour tree leaf node for running an action.
     /// </summary>
-    public class ConditionNode : BaseNode,IBehaviourTreeNode
+    public class ConditionNode : BaseNode, IBehaviourTreeNode
     {
-        /// <summary>
-        /// The name of the node.
-        /// </summary>
-        private string name;
-
+       
         /// <summary>
         /// Function to invoke for the action.
         /// </summary>
         private Func<TimeData, bool> fn;
 
-        public ConditionNode(string name, Func<TimeData, bool> fn)
-        {
-            this.name = name;
+        public ConditionNode(string name, Func<TimeData, bool> fn) : base(name)
+        {  
             this.fn = fn; 
         }
         

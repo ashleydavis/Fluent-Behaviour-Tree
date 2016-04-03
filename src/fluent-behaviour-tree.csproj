@@ -45,12 +45,12 @@
     <Compile Include="IBehaviourTreeNode.cs" />
     <Compile Include="Nodes\ActionNode.cs" />
     <Compile Include="Nodes\BaseNode.cs" />
+    <Compile Include="Nodes\BaseParentNode.cs" />
     <Compile Include="Nodes\ConditionNode.cs" />
     <Compile Include="Nodes\InverterNode.cs" />
     <Compile Include="Nodes\ParallelNode.cs" />
     <Compile Include="Nodes\SelectorNode.cs" />
     <Compile Include="Nodes\SequenceNode.cs" />
-    <Compile Include="Nodes\TestCoroutine.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TimeData.cs" />
   </ItemGroup>

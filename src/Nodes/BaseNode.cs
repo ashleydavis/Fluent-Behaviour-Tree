@@ -9,8 +9,15 @@ namespace FluentBehaviourTree {
     {
         public BehaviourTreeStatus currentStatus { get; set; }
         public IBehaviourTreeNode parent { get; set; }
+        public Dictionary<string,IBehaviourTreeNode> nodeMap { get; set; }
+        /// <summary>
+        /// The name of the node.
+        /// </summary>
+        public string name { get; set; }
 
-        public BaseNode() : base() {
+        public BaseNode(string aName) : base() {
+            parent = null;
+            name   = aName;
             currentStatus = BehaviourTreeStatus.Initial;
         }
         public bool isComplete()
@@ -28,6 +35,38 @@ namespace FluentBehaviourTree {
         public bool isFailed()
         {
             return currentStatus == BehaviourTreeStatus.Failure;
+        }
+        public virtual void SetStatusAll(BehaviourTreeStatus aStatus)
+        {
+            currentStatus = aStatus;
+        }
+        public bool hasParent()
+        {
+            return parent != null;
+        }
+        public virtual int CountAllForStatus(BehaviourTreeStatus aStatus)
+        {
+            if (currentStatus == aStatus)
+                return 1;
+            else
+                return 0;
+        }
+        public Dictionary<string,IBehaviourTreeNode> getNodeMap()
+        {
+            if (hasParent())
+                return parent.getNodeMap();
+            else
+                return this.nodeMap;
+        }
+        public IBehaviourTreeNode getNode(string aNodeName)
+        {
+            return getNodeMap()[aNodeName];
+        }
+        public virtual string getTreeAsString(string prefix)
+        {
+            StringBuilder builder = new StringBuilder();
+            builder.Append(prefix + name + "[" + this.GetType() + "] - " + currentStatus+  "\n");
+            return builder.ToString();
         }
         public IEnumerator GetEnumerator()
         {

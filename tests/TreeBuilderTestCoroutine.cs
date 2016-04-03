@@ -9,9 +9,9 @@ using System.Reflection;
 
 namespace tests
 {
-    public class TreeBuilderTest2
+    public class treeBuilderTestCoroutine
     {
-        BehaviourTreeBuilder treeBuilder2;
+        BehaviourTreeBuilder treeBuilder;
         IBehaviourTreeNode btree1;
         IBehaviourTreeNode btree2;
         Dictionary<string, string> callData;
@@ -39,7 +39,7 @@ namespace tests
 
         void Init()
         {
-            treeBuilder2 = new BehaviourTreeBuilder();
+            treeBuilder = new BehaviourTreeBuilder();
             callData = new Dictionary<string, string>();
         }
 
@@ -73,8 +73,17 @@ namespace tests
             Assert.Equal(FactionSuccess, callData[seq2Action2 + deltaTime]);
             Assert.Equal(FactionSuccess, callData[seq2Action3 + deltaTime]);
 
+            Dictionary<string, IBehaviourTreeNode> nodeMap = btree1.getNodeMap();
+            IBehaviourTreeNode seq1 = nodeMap["Sequence1"];
+            IBehaviourTreeNode selector = nodeMap["Selector-With-Condition"];
+            IBehaviourTreeNode sel1Action2Node = nodeMap[sel1Action2];
+            IBehaviourTreeNode sel1Action3Node = nodeMap[sel1Action3];
+
             Console.WriteLine(" Btree1 Hierarchy --> ");
             Console.WriteLine(btree1.getTreeAsString(" --> "));
+            Assert.Equal(seq1.currentStatus, BehaviourTreeStatus.Success);
+            Assert.Equal(sel1Action2Node.currentStatus, BehaviourTreeStatus.Failure);
+            Assert.Equal(sel1Action3Node.currentStatus, BehaviourTreeStatus.Success);
 
         }
         [Fact]
@@ -83,7 +92,7 @@ namespace tests
             float deltaTime = 123.87f;
             Init();
             initTree2();
-            var e= btree2.Tick(new TimeData(deltaTime));
+            var e = btree2.Tick(new TimeData(deltaTime));
             e.MoveNext();
             // Check callData to ensure leaf node was invoked by the Tick.
 
@@ -108,14 +117,24 @@ namespace tests
             Assert.False(callData.ContainsKey(seq2Action2 + deltaTime));
             Assert.False(callData.ContainsKey(seq2Action3 + deltaTime));
 
+
+            Dictionary<string, IBehaviourTreeNode> nodeMap = btree2.getNodeMap();
+            IBehaviourTreeNode seq1 = nodeMap["Sequence1"];
+            IBehaviourTreeNode selector = nodeMap["Selector-With-Condition"];
+            IBehaviourTreeNode sel1Action2Node = nodeMap[sel1Action2];
+            IBehaviourTreeNode sel1Action3Node = nodeMap[sel1Action3];
+
             Console.WriteLine(" Btree2 Hierarchy --> ");
             Console.WriteLine(btree2.getTreeAsString(" --> "));
+            Assert.Equal(seq1.currentStatus, BehaviourTreeStatus.Failure);
+            Assert.Equal(sel1Action2Node.currentStatus, BehaviourTreeStatus.Failure);
+            Assert.Equal(sel1Action3Node.currentStatus, BehaviourTreeStatus.Success);
         }
         void initTree1()
         {
             Console.WriteLine("Initializing Behavior Tree 1");
 
-            btree1 = treeBuilder2
+            btree1 = treeBuilder
                     .Sequence("Sequence1")
                         .Do(seq1Action1, t =>
                         {
@@ -125,14 +144,14 @@ namespace tests
                         {
                             return actionSuccess(t, seq1Action2);
                         })
-
+                    
                     .Selector("Selector-With-Condition")
                         .Condition(sel1Condition, t => { return evalActionTrue(t, sel1Condition); })
                             .Do(sel1Action1, t => { return actionFail(t, sel1Action1); })
                             .Do(sel1Action2, t => { return actionFail(t, sel1Action2); })
                             .Do(sel1Action3, t => { return actionSuccess(t, sel1Action3); })
 
-
+                  
                     .Parallel("Parallel1", 1, 2).
                         Do(par1Action1, t =>
                         {
@@ -161,6 +180,7 @@ namespace tests
                         {
                             return actionSuccess(t, seq2Action3);
                         })
+                        .End()
                 .Build();
             Console.WriteLine("Finished Buidling Behavior Tree 1 !");
         }
@@ -168,7 +188,7 @@ namespace tests
         {
             Console.WriteLine("Initializing Behavior Tree 2");
 
-            btree2 = treeBuilder2
+            btree2 = treeBuilder
                     .Sequence("Sequence1")
                         .Do(seq1Action1, t =>
                         {
@@ -219,52 +239,23 @@ namespace tests
         }
         public bool evalActionTrue(TimeData t, string aValue)
         {
-
-            StackFrame frame = new StackFrame(2);
-            string methodName = frame.GetMethod().Name; //Gets the current method name
-            MethodBase method = frame.GetMethod();
-            string className = method.DeclaringType.Name; //Gets the current class name
-            string caller = className + "." + methodName;
-            string thismethod = this.GetType().ToString() + "." + MethodBase.GetCurrentMethod().Name;
-            Console.WriteLine("in " + thismethod + " : Caller: " + caller);
             callData.Add(aValue + t.deltaTime, FevalActionTrue);
-
             return true;
         }
         public bool evalActionFalse(TimeData t, string aValue)
-        {
-            StackFrame frame = new StackFrame(2);
-            string methodName = frame.GetMethod().Name; //Gets the current method name
-            MethodBase method = frame.GetMethod();
-            string className = method.DeclaringType.Name; //Gets the current class name
-            string caller = className + "." + methodName;
-            string thismethod = this.GetType().ToString() + "." + MethodBase.GetCurrentMethod().Name;
-            Console.WriteLine("in " + thismethod + " : Caller: " + caller);
+        {            
             callData.Add(aValue + t.deltaTime, FevalActionFalse);
             return false;
         }
         public IEnumerator<BehaviourTreeStatus> actionSuccess(TimeData t, string aValue)
         {
-            StackFrame frame = new StackFrame(2);
-            string methodName = frame.GetMethod().Name; //Gets the current method name
-            MethodBase method = frame.GetMethod();
-            string className = method.DeclaringType.Name; //Gets the current class name
-            string caller = className + "." + methodName;
-            string thismethod = this.GetType().ToString() + "." + MethodBase.GetCurrentMethod().Name;
-            Console.WriteLine("in " + thismethod + " : Caller: " + caller);
+
             Console.WriteLine(aValue + " --> Action Successful ! at Delta time:" + t.deltaTime);
             callData.Add(aValue + t.deltaTime, FactionSuccess);
             yield return BehaviourTreeStatus.Success;
         }
         public IEnumerator<BehaviourTreeStatus> actionFail(TimeData t, string aValue)
         {
-            StackFrame frame = new StackFrame(2);
-            string methodName = frame.GetMethod().Name; //Gets the current method name
-            MethodBase method = frame.GetMethod();
-            string className = method.DeclaringType.Name; //Gets the current class name
-            string caller = className + "." + methodName;
-            string thismethod = this.GetType().ToString() + "." + MethodBase.GetCurrentMethod().Name;
-            Console.WriteLine("in " + thismethod + " : Caller: " + caller);
             Console.WriteLine(aValue + " --> Action Failed ! at Delta time:" + t.deltaTime);
             //throw new ApplicationException("Node Failure to Execute !!");
             callData.Add(aValue + t.deltaTime, FactionFail);

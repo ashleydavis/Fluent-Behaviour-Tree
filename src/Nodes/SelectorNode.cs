@@ -8,22 +8,13 @@ namespace FluentBehaviourTree
     /// <summary>
     /// Selects the first node that succeeds. Tries successive nodes until it finds one that doesn't fail.
     /// </summary>
-    public class SelectorNode : BaseNode, IParentBehaviourTreeNode
+    public class SelectorNode : BaseParentNode, IParentBehaviourTreeNode
     {
-        /// <summary>
-        /// The name of the node.
-        /// </summary>
-        private string name;
+       
         private bool isRandom;
 
-        /// <summary>
-        /// List of child nodes.
-        /// </summary>
-        private List<IBehaviourTreeNode> children = new List<IBehaviourTreeNode>(); //todo: optimization, bake this to an array.
-
-        public SelectorNode(string name, bool random=false)
+        public SelectorNode(string name, bool random=false):base(name)
         {
-            this.name = name;
             this.isRandom = random;
         }
 
@@ -44,8 +35,10 @@ namespace FluentBehaviourTree
 
                 if (status.Current != BehaviourTreeStatus.Success)
                 {
+                    // Return Failure and Exit the Node
                     currentStatus = BehaviourTreeStatus.Failure;
                     yield return currentStatus;
+                    yield break;
                 } else
                     ++skipOne; 
             }
@@ -59,44 +52,31 @@ namespace FluentBehaviourTree
                 var childStatus = child.Tick(time);
                 childStatus.MoveNext();
                 currentStatus = childStatus.Current;
-                if (isSuccess())
+                if (isRunning())
                 {
-                    currentStatus = childStatus.Current;
-                    yield return currentStatus;
-                    yield break;
-                }
-                // keep running until completed
-                else if (isRunning())
-                {
+                    // keep looping until we exit running mode or we
+                    // run out of enum values.
                     yield return currentStatus;
                     while (childStatus.MoveNext())
                     {
                         currentStatus = childStatus.Current;
-                        if (isComplete())
-                        {
-                            yield return currentStatus;
-                            yield break;
-                        }
-                    }
-                    // if failed exit and return status
-                    if (isFailed())
-                    {
-                        yield return currentStatus;
-                        yield break;
+                        if (!isRunning())
+                            break;
                     }
                 }
+                // On exit above, status should be success or fail 
+                // if success, then exit selector
+                if (isSuccess())
+                {
+                    yield return currentStatus;
+                    yield break;
+                }
+              
             }
 
             yield return currentStatus;
         }
 
-        /// <summary>
-        /// Add a child node to the selector.
-        /// </summary>
-        public void AddChild(IBehaviourTreeNode child)
-        {
-            children.Add(child);
-        }
         // randomize a list
         public static List<T> Randomize<T>(List<T> list)
         {
