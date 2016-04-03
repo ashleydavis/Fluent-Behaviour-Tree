@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace FluentBehaviourTree
 {
@@ -31,14 +28,34 @@ namespace FluentBehaviourTree
             {
                 var childStatus = child.Tick(time);
                 childStatus.MoveNext();
-                if (childStatus.Current != BehaviourTreeStatus.Success)
+                currentStatus = childStatus.Current;
+                if (isFailed())
                 {
-                    yield return childStatus.Current;
+                    yield return currentStatus;
                     yield break;
+                }
+                else if (isRunning())
+                {
+                    yield return currentStatus;
+                    while (childStatus.MoveNext())
+                    {
+                        currentStatus = childStatus.Current;
+                        if (isComplete())
+                        {
+                            yield return currentStatus;
+                            yield break;
+                        }
+                    }
+                    // if failed exit and return status
+                    if (isFailed())
+                    {
+                        yield return currentStatus;
+                        yield break;
+                    }
                 }
             }
 
-            yield return BehaviourTreeStatus.Success;
+            yield return currentStatus;
         }
 
         /// <summary>

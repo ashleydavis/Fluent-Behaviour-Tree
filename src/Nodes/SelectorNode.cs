@@ -33,8 +33,7 @@ namespace FluentBehaviourTree
         // should have  selector behaviour applied unless the first one is a condition Action.
         public IEnumerator<BehaviourTreeStatus> Tick(TimeData time)
         {
-            
-            int skipOne = 0;
+             int skipOne = 0;
             // check if this is a conditional action
             IBehaviourTreeNode firstNode = children[0];
             if (firstNode is ConditionNode)
@@ -42,9 +41,13 @@ namespace FluentBehaviourTree
                 ConditionNode firstChild = (ConditionNode) firstNode;
                 var status = firstChild.Tick(time);
                 status.MoveNext();
+
                 if (status.Current != BehaviourTreeStatus.Success)
-                    yield return BehaviourTreeStatus.Failure;
-                ++skipOne; 
+                {
+                    currentStatus = BehaviourTreeStatus.Failure;
+                    yield return currentStatus;
+                } else
+                    ++skipOne; 
             }
 
             List<IBehaviourTreeNode> remainingChildren = children.Skip(skipOne).ToList<IBehaviourTreeNode>();
@@ -55,14 +58,36 @@ namespace FluentBehaviourTree
             {
                 var childStatus = child.Tick(time);
                 childStatus.MoveNext();
-                if (childStatus.Current != BehaviourTreeStatus.Failure)
+                currentStatus = childStatus.Current;
+                if (isSuccess())
                 {
-                    yield return childStatus.Current;
+                    currentStatus = childStatus.Current;
+                    yield return currentStatus;
                     yield break;
+                }
+                // keep running until completed
+                else if (isRunning())
+                {
+                    yield return currentStatus;
+                    while (childStatus.MoveNext())
+                    {
+                        currentStatus = childStatus.Current;
+                        if (isComplete())
+                        {
+                            yield return currentStatus;
+                            yield break;
+                        }
+                    }
+                    // if failed exit and return status
+                    if (isFailed())
+                    {
+                        yield return currentStatus;
+                        yield break;
+                    }
                 }
             }
 
-            yield return BehaviourTreeStatus.Failure;
+            yield return currentStatus;
         }
 
         /// <summary>

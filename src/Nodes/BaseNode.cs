@@ -8,7 +8,8 @@ namespace FluentBehaviourTree {
     public class BaseNode : IEnumerable
     {
         public BehaviourTreeStatus currentStatus { get; set; }
-       
+        public IBehaviourTreeNode parent { get; set; }
+
         public BaseNode() : base() {
             currentStatus = BehaviourTreeStatus.Initial;
         }
@@ -20,7 +21,14 @@ namespace FluentBehaviourTree {
         {
             return currentStatus == BehaviourTreeStatus.Running;
         }
-
+        public bool isSuccess()
+        {
+            return currentStatus == BehaviourTreeStatus.Success;
+        }
+        public bool isFailed()
+        {
+            return currentStatus == BehaviourTreeStatus.Failure;
+        }
         public IEnumerator GetEnumerator()
         {
             throw new NotImplementedException();

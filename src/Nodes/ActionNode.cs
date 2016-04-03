@@ -33,7 +33,10 @@ namespace FluentBehaviourTree
         {
            for ( var e = fn(time); e.MoveNext(); )
             {
-                yield return e.Current;
+                currentStatus = e.Current;
+                yield return currentStatus;
+                if (isComplete())
+                    yield break;
             }
            
         }

@@ -41,7 +41,7 @@ namespace FluentBehaviourTree
         {
            
             currentStatus = BehaviourTreeStatus.Running;
-            while (currentStatus != BehaviourTreeStatus.Completed)
+            while (!isComplete())
             {
                 numChildrenSuceeded = 0;
                 numChildrenFailed = 0;
@@ -59,19 +59,23 @@ namespace FluentBehaviourTree
 
                 if (numRequiredToSucceed > 0 && numChildrenSuceeded >= numRequiredToSucceed)
                 {
-                    yield return BehaviourTreeStatus.Success;
-                    currentStatus = BehaviourTreeStatus.Completed;
+                    currentStatus = BehaviourTreeStatus.Success;
+                    yield return currentStatus;
                     yield break;
                 }
                 else
                 if (numRequiredToFail > 0 && numChildrenFailed >= numRequiredToFail)
                 {
-                    yield return BehaviourTreeStatus.Failure;
-                    currentStatus = BehaviourTreeStatus.Completed;
+
+                    currentStatus = BehaviourTreeStatus.Failure;
+                    yield return currentStatus;
                     yield break;
                 }
-                else
-                    yield return BehaviourTreeStatus.Running;
+                else {
+                    // Keep Running until we meet our goal of successes or failures
+                    currentStatus = BehaviourTreeStatus.Running;
+                    yield return currentStatus;
+                }
             }
         }
 

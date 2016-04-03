@@ -28,7 +28,8 @@ namespace FluentBehaviourTree
         
         public IEnumerator<BehaviourTreeStatus> Tick(TimeData time)
         {
-            yield return fn(time) ? BehaviourTreeStatus.Success : BehaviourTreeStatus.Failure;
+            currentStatus = fn(time) ? BehaviourTreeStatus.Success : BehaviourTreeStatus.Failure;
+            yield return currentStatus;
         }
        
     }

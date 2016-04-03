@@ -34,21 +34,19 @@ namespace FluentBehaviourTree
 
             var result = childNode.Tick(time);
             result.MoveNext();
-            if (result.Current == BehaviourTreeStatus.Failure)
+            currentStatus = result.Current;
+            if (isFailed())
             {
-               yield return BehaviourTreeStatus.Success;
-               yield break;
+               currentStatus = BehaviourTreeStatus.Success;
             }
-            else if (result.Current == BehaviourTreeStatus.Success)
+            else if (isSuccess())
             {
-               yield return BehaviourTreeStatus.Failure;
-               yield break;
+               currentStatus =  BehaviourTreeStatus.Failure;
+               
             }
-            else
-            {
-                yield return result.Current;
-                yield break;
-            }
+           
+            yield return currentStatus;
+           
         }
 
         /// <summary>
