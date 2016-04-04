@@ -55,7 +55,8 @@ namespace FluentBehaviourTree
                         // been started.
                         runningNodes.Add(child);
                         childStatus.Add(chStatus);
-                        yield return BehaviourTreeStatus.Running;
+                        // only return an enumerated value after all nodes have been evaluated
+                        //yield return BehaviourTreeStatus.Running;
                       
                     }
                     else {
@@ -72,14 +73,23 @@ namespace FluentBehaviourTree
              
                 while (hasRunning)
                 {
+                    // return once for all nodes in running status
+                    yield return BehaviourTreeStatus.Running;
                     hasRunning = false;
                     int curElement = -1;
                     foreach (IEnumerator<BehaviourTreeStatus> cstat in childStatus)
                     {
                         ++curElement;
-                        if (runningNodes[curElement].currentStatus == BehaviourTreeStatus.Running)
+                        if (runningNodes[curElement].isRunning())
                         {
-                            cstat.MoveNext();
+                            if (!cstat.MoveNext())
+                            {
+                                // no more values - this is an error as a node should always exit running status
+                                // and return either failed or success
+                                runningNodes[curElement].currentStatus = BehaviourTreeStatus.Failure;
+                                ++numChildrenFailed;
+                            }
+                            else 
                             if (cstat.Current != BehaviourTreeStatus.Running)
                             {
                                 switch (cstat.Current)
@@ -90,7 +100,6 @@ namespace FluentBehaviourTree
                             }
                             else {
                                 hasRunning = true;
-                                yield return BehaviourTreeStatus.Running;
                             }
                         }   
                     }
