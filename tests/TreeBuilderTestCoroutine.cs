@@ -44,6 +44,39 @@ namespace tests
         }
 
         [Fact]
+        public void testCoroutine() { 
+            Log("Before StartCoroutine()");
+            IEnumerator<BehaviourTreeStatus> f1 = (coroutine("Some Input Value", (myReturnValue, location) =>
+            {
+                Log("Returned Value from " + location + " is: " + myReturnValue);
+            }));
+            for (var x = f1; x.MoveNext();)
+            {
+                Console.WriteLine(" --> Result is: " + x.Current);
+            }
+            Log("End Iteration of coroutine()");
+           
+        }
+
+        public void Log(string msg)
+        {
+            Console.WriteLine(msg);
+        }
+
+        IEnumerator<BehaviourTreeStatus> coroutine(string inputval, System.Action<BehaviourTreeStatus, string> callback)
+        {
+            Log("Beginning of coroutine()");
+            float deltaTime = 523.4f;
+            TimeData timeData = new TimeData(deltaTime);
+            for (var e = btree1.Tick(timeData); e.MoveNext();)
+            {
+                yield return e.Current;
+                callback(e.Current, "btree1");
+            }
+            Log("End of coroutine()");
+           
+        }
+        [Fact]
         public void testSecondSequenceSucceeds()
         {
             float deltaTime = 523.4f;
