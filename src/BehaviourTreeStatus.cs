@@ -15,13 +15,26 @@ namespace FluentBehaviourTree
         Failure,
         Running
     }
+    /// <summary>
+    /// Returns the BehaviourTreeStatus wrapped into an IEnumerator suitable for iterating
+    /// to the next value using the MoveNext() method.
+    /// </summary>
     public class TreeStatus
     {
         public static IEnumerator<BehaviourTreeStatus> getStatus(BehaviourTreeStatus aStatus)
         {
-            List<BehaviourTreeStatus> status = new List<BehaviourTreeStatus>();
-            status.Add(aStatus);
-            return status.GetEnumerator();
+            List<BehaviourTreeStatus> onestatus = new List<BehaviourTreeStatus>();
+            onestatus.Add(aStatus);
+            return onestatus.GetEnumerator();
+        }
+        public static IEnumerator<BehaviourTreeStatus> getStatus(BehaviourTreeStatus[] status)
+        {
+            List<BehaviourTreeStatus> mstatus = new List<BehaviourTreeStatus>();
+            foreach (var stat in mstatus)
+            {
+                mstatus.Add(stat);
+            }
+            return mstatus.GetEnumerator();
         }
     }
 }

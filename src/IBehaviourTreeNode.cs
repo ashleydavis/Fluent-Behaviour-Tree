@@ -65,5 +65,25 @@ namespace FluentBehaviourTree
         /// <param name="prefix"></param>
         /// <returns></returns>
         string getTreeAsString(string prefix);
+        /// <summary>
+        /// Return whether node has completed i.e. success or fail
+        /// </summary>
+        /// <returns></returns>
+        bool isComplete();
+        /// <summary>
+        /// Return whether node is still running
+        /// </summary>
+        /// <returns></returns>
+        bool isRunning();
+        /// <summary>
+        /// Return whether node has failed - i.e. returned failure status
+        /// </summary>
+        /// <returns></returns>
+        bool isFailed();
+        /// <summary>
+        /// Returns whether node is successfull
+        /// </summary>
+        /// <returns></returns>
+        bool isSuccess();
     }
 }
