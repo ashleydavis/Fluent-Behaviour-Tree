@@ -10,11 +10,17 @@ using System.Threading;
 
 namespace tests
 {
+    /// <summary>
+    /// This class unit tests the IENumerator interface of the BehaviourTree to return
+    /// each iteration of the node as an enumerated value.  This is useful so that nodes
+    /// can spread their execution over several frames to make the UI more responsive.
+    /// Nodes that do not need to make use of this feature can just yield success or failure 
+    /// immediately after doing their work.
+    /// </summary>
     public class treeBuilderTestCoroutine
     {
         BehaviourTreeBuilder treeBuilder;
         IBehaviourTreeNode btree1;
-        IBehaviourTreeNode btree2;
         Dictionary<string, string> callData;
 
         string seq1Action1 = "Sequence1Action1";
@@ -53,7 +59,7 @@ namespace tests
             Console.WriteLine(btree1.getTreeAsString(" --> "));
             IEnumerator<BehaviourTreeStatus> f1 = (coroutine("Some Input Value", (myReturnValue, location) =>
             {
-                Log("Returned Value from " + location + " is: " + myReturnValue);
+                Log("-- Callback Returned Value from " + location + " is: " + myReturnValue);
             }));
             for (var x = f1; x.MoveNext();)
             {
@@ -62,6 +68,36 @@ namespace tests
             Log("End Iteration of coroutine()");
             Console.WriteLine(" ===> Ending Btree1 Hierarchy From testCoroutine --> ");
             Console.WriteLine(btree1.getTreeAsString(" --> "));
+
+            int numSuccess = btree1.CountAllForStatus(BehaviourTreeStatus.Success);
+            int numFailure = btree1.CountAllForStatus(BehaviourTreeStatus.Failure);
+            int numRunning = btree1.CountAllForStatus(BehaviourTreeStatus.Running);
+            int numInitial = btree1.CountAllForStatus(BehaviourTreeStatus.Initial);
+            
+            Log("numSuccess=" + numSuccess + " numFailure=" + numFailure + " numRunning=" + numRunning + " numInitial="+numInitial);
+            // numSuccess = 11 numFailure = 5 numRunning = 0 numInitial = 0
+            Assert.Equal(numSuccess, 11);
+            Assert.Equal(numFailure, 5);
+            Assert.Equal(numRunning, 0);
+            Assert.Equal(numInitial, 0);
+
+            // Check Node Properties
+            Dictionary<string, IBehaviourTreeNode> nodeMap = btree1.getNodeMap();
+            Assert.True(nodeMap[par1Action3].isSuccess());
+            Assert.True(nodeMap[par1Action1].isFailed());
+            Assert.True(nodeMap[seq2Action2].isSuccess());
+            Assert.True(nodeMap[sel1Condition].isSuccess());
+
+            Assert.Equal(nodeMap[seq2Action2].name, seq2Action2);
+            Assert.Equal(nodeMap[par1Action1].name, par1Action1);
+            Assert.Equal(nodeMap[seq1Action1].name, seq1Action1);
+
+            // Reset all node statuses to Initial
+            btree1.SetStatusAll(BehaviourTreeStatus.Initial);
+            Assert.Equal(btree1.CountAllForStatus(BehaviourTreeStatus.Initial), 16);
+            Console.WriteLine(" ===> After Reinitializing Btree1 Hierarchy From testCoroutine --> ");
+            Console.WriteLine(btree1.getTreeAsString(" --> "));
+
         }
 
         public void Log(string msg)
@@ -72,7 +108,7 @@ namespace tests
         IEnumerator<BehaviourTreeStatus> coroutine(string inputval, System.Action<BehaviourTreeStatus, string> callback)
         {
             Log("Beginning of coroutine()");
-            float deltaTime = 278.86f;
+            float deltaTime = 315.976f;
             TimeData timeData = new TimeData(deltaTime);
             
             for (var e = btree1.Tick(timeData); e.MoveNext();)

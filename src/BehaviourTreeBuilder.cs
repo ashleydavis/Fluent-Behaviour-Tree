@@ -4,7 +4,26 @@ using System.Linq;
 using System.Text;
 
 /*
-     Fixes Implemented in the git hub version of the code:
+    Major Improvements
+    ------------------
+    1.  Added BaseNode and BaseParentNode to contain default behavior of nodes.
+    2.  Added status to track node status as they are ticked
+    3.  Added NodeMap which contains a dictionary of all Nodes in the tree with name as Key. In this
+        version, it is therefore important to have unique node names otherwise dictionary setup will fail.
+    4.  Trees and all nodes now implement the IENumerator interface and node status will be passed back
+        from nodes using yield of the BehaviourStatus. This will enable the tree to hold it's state when it 
+        is ticked and before it has completed it's intended action. The tree can thus be used in Unity's
+        startcoroutine function so that it can continue where it left off if an action spans more than one frame.
+    5.  Added printTreeAsString to get a visual representation of the tree.
+    6.  Added methods to set state of all nodes and to retrieve any node by name.
+    7.  Added 4 unit test classes (tests.TreeBuilderTest1,2,3. and test.CoroutineTest.testCoroutine)
+    8.  Added a Randomize Feature to the SelectorNode which will randomize the list of selector leaf nodes
+        and change the order in which it will tick the selector node in trying to find the first one that
+        succeeds. (syntax:  .RandomSelector(..) which reuses the selectorNode but with a bool flag to indicate
+        that selector randomization is required.
+
+    Problem Fixes before improvements:
+    ---------------------------------
 
             Classes Changed: BehaviourTreeBuilder.cs
             ========================================

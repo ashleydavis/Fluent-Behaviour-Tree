@@ -85,5 +85,9 @@ namespace FluentBehaviourTree
         /// </summary>
         /// <returns></returns>
         bool isSuccess();
+        /// <summary>
+        /// Returns name of the node
+        /// </summary>
+        string name { get; set; }
     }
 }
