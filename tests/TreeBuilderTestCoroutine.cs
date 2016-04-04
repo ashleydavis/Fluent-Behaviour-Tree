@@ -6,6 +6,7 @@ using System.Text;
 using Xunit;
 using System.Diagnostics;
 using System.Reflection;
+using System.Threading;
 
 namespace tests
 {
@@ -46,16 +47,21 @@ namespace tests
         [Fact]
         public void testCoroutine() { 
             Log("Before StartCoroutine()");
+            Init();
+            initTree1();
+            Console.WriteLine(" ===> Beginning Btree1 Hierarchy From testCoroutine --> ");
+            Console.WriteLine(btree1.getTreeAsString(" --> "));
             IEnumerator<BehaviourTreeStatus> f1 = (coroutine("Some Input Value", (myReturnValue, location) =>
             {
                 Log("Returned Value from " + location + " is: " + myReturnValue);
             }));
             for (var x = f1; x.MoveNext();)
             {
-                Console.WriteLine(" --> Result is: " + x.Current);
+                Console.WriteLine(" --> Result in testCoroutine is: " + x.Current);
             }
             Log("End Iteration of coroutine()");
-           
+            Console.WriteLine(" ===> Ending Btree1 Hierarchy From testCoroutine --> ");
+            Console.WriteLine(btree1.getTreeAsString(" --> "));
         }
 
         public void Log(string msg)
@@ -66,8 +72,9 @@ namespace tests
         IEnumerator<BehaviourTreeStatus> coroutine(string inputval, System.Action<BehaviourTreeStatus, string> callback)
         {
             Log("Beginning of coroutine()");
-            float deltaTime = 523.4f;
+            float deltaTime = 278.86f;
             TimeData timeData = new TimeData(deltaTime);
+            
             for (var e = btree1.Tick(timeData); e.MoveNext();)
             {
                 yield return e.Current;
@@ -76,93 +83,7 @@ namespace tests
             Log("End of coroutine()");
            
         }
-        [Fact]
-        public void testSecondSequenceSucceeds()
-        {
-            float deltaTime = 523.4f;
-            Init();
-            initTree1();
-            var e = btree1.Tick(new TimeData(deltaTime));
-            e.MoveNext();
-            // Check callData to ensure leaf node was invoked by the Tick.
-
-            // Check Sequence 1 Actions
-            Assert.Equal(FactionSuccess, callData[seq1Action1 + deltaTime]);
-            Assert.Equal(FactionSuccess, callData[seq1Action2 + deltaTime]);
-
-            // Check Condition Actions
-            Assert.Equal(FevalActionTrue, callData[sel1Condition + deltaTime]);
-            Assert.Equal(FactionFail, callData[sel1Action1 + deltaTime]);
-            Assert.Equal(FactionFail, callData[sel1Action2 + deltaTime]);
-            // Last Selector will be called because it is the only one that does not fail
-            Assert.Equal(FactionSuccess, callData[sel1Action3 + deltaTime]);
-            // Parallel Calls will not be executed b/c it is in selector scope
-            Assert.False(callData.ContainsKey(par1Action1 + deltaTime));
-            Assert.False(callData.ContainsKey(par1Action2 + deltaTime));
-            Assert.False(callData.ContainsKey(par1Action3 + deltaTime));
-
-            // Sequence2 will now be executed because of the end() placed after the parallel calls
-            Assert.Equal(FactionSuccess, callData[seq2Action1 + deltaTime]);
-            Assert.Equal(FactionSuccess, callData[seq2Action2 + deltaTime]);
-            Assert.Equal(FactionSuccess, callData[seq2Action3 + deltaTime]);
-
-            Dictionary<string, IBehaviourTreeNode> nodeMap = btree1.getNodeMap();
-            IBehaviourTreeNode seq1 = nodeMap["Sequence1"];
-            IBehaviourTreeNode selector = nodeMap["Selector-With-Condition"];
-            IBehaviourTreeNode sel1Action2Node = nodeMap[sel1Action2];
-            IBehaviourTreeNode sel1Action3Node = nodeMap[sel1Action3];
-
-            Console.WriteLine(" Btree1 Hierarchy --> ");
-            Console.WriteLine(btree1.getTreeAsString(" --> "));
-            Assert.Equal(seq1.currentStatus, BehaviourTreeStatus.Success);
-            Assert.Equal(sel1Action2Node.currentStatus, BehaviourTreeStatus.Failure);
-            Assert.Equal(sel1Action3Node.currentStatus, BehaviourTreeStatus.Success);
-
-        }
-        [Fact]
-        public void testParallelFailure()
-        {
-            float deltaTime = 123.87f;
-            Init();
-            initTree2();
-            var e = btree2.Tick(new TimeData(deltaTime));
-            e.MoveNext();
-            // Check callData to ensure leaf node was invoked by the Tick.
-
-            // Check Sequence 1 Actions
-            Assert.Equal(FactionSuccess, callData[seq1Action1 + deltaTime]);
-            Assert.Equal(FactionSuccess, callData[seq1Action2 + deltaTime]);
-
-            // Check Condition Actions
-            Assert.Equal(FevalActionTrue, callData[sel1Condition + deltaTime]);
-            Assert.Equal(FactionFail, callData[sel1Action1 + deltaTime]);
-            Assert.Equal(FactionFail, callData[sel1Action2 + deltaTime]);
-            // Last Selector will be called because it is the only one that does not fail
-            Assert.Equal(FactionSuccess, callData[sel1Action3 + deltaTime]);
-            // Parallel Calls will be executed but because it meets failure criteria
-            // the next parent will not be executed.
-            Assert.Equal(FactionFail, callData[par1Action1 + deltaTime]);
-            Assert.Equal(FactionFail, callData[par1Action2 + deltaTime]);
-            Assert.Equal(FactionSuccess, callData[par1Action3 + deltaTime]);
-
-            // Last Sequence will not be called - because of failure of parallel nodes
-            Assert.False(callData.ContainsKey(seq2Action1 + deltaTime));
-            Assert.False(callData.ContainsKey(seq2Action2 + deltaTime));
-            Assert.False(callData.ContainsKey(seq2Action3 + deltaTime));
-
-
-            Dictionary<string, IBehaviourTreeNode> nodeMap = btree2.getNodeMap();
-            IBehaviourTreeNode seq1 = nodeMap["Sequence1"];
-            IBehaviourTreeNode selector = nodeMap["Selector-With-Condition"];
-            IBehaviourTreeNode sel1Action2Node = nodeMap[sel1Action2];
-            IBehaviourTreeNode sel1Action3Node = nodeMap[sel1Action3];
-
-            Console.WriteLine(" Btree2 Hierarchy --> ");
-            Console.WriteLine(btree2.getTreeAsString(" --> "));
-            Assert.Equal(seq1.currentStatus, BehaviourTreeStatus.Failure);
-            Assert.Equal(sel1Action2Node.currentStatus, BehaviourTreeStatus.Failure);
-            Assert.Equal(sel1Action3Node.currentStatus, BehaviourTreeStatus.Success);
-        }
+       
         void initTree1()
         {
             Console.WriteLine("Initializing Behavior Tree 1");
@@ -177,15 +98,14 @@ namespace tests
                         {
                             return actionSuccess(t, seq1Action2);
                         })
-                    
+                    .End()
                     .Selector("Selector-With-Condition")
                         .Condition(sel1Condition, t => { return evalActionTrue(t, sel1Condition); })
                             .Do(sel1Action1, t => { return actionFail(t, sel1Action1); })
                             .Do(sel1Action2, t => { return actionFail(t, sel1Action2); })
-                            .Do(sel1Action3, t => { return actionSuccess(t, sel1Action3); })
+                            .Do(sel1Action3, t => { return actionFail(t, sel1Action3); })
 
-                  
-                    .Parallel("Parallel1", 1, 2).
+                    .Parallel("Parallel1", 1, 1).
                         Do(par1Action1, t =>
                         {
                             return actionFail(t, par1Action1);
@@ -213,63 +133,11 @@ namespace tests
                         {
                             return actionSuccess(t, seq2Action3);
                         })
-                        .End()
+                    .End()
                 .Build();
             Console.WriteLine("Finished Buidling Behavior Tree 1 !");
         }
-        void initTree2()
-        {
-            Console.WriteLine("Initializing Behavior Tree 2");
-
-            btree2 = treeBuilder
-                    .Sequence("Sequence1")
-                        .Do(seq1Action1, t =>
-                        {
-                            return actionSuccess(t, seq1Action1);
-                        })
-                        .Do(seq1Action2, t =>
-                        {
-                            return actionSuccess(t, seq1Action2);
-                        })
-                    .End()
-                    .Selector("Selector-With-Condition")
-                        .Condition(sel1Condition, t => { return evalActionTrue(t, sel1Condition); })
-                            .Do(sel1Action1, t => { return actionFail(t, sel1Action1); })
-                            .Do(sel1Action2, t => { return actionFail(t, sel1Action2); })
-                            .Do(sel1Action3, t => { return actionSuccess(t, sel1Action3); })
-                    .End()
-                    .Parallel("Parallel1", 1, 2).
-                        Do(par1Action1, t =>
-                        {
-                            return actionFail(t, par1Action1);
-                        })
-                        .Do(par1Action2, t =>
-                        {
-                            return actionFail(t, par1Action2);
-                        })
-                        .Do(par1Action3, t =>
-                        {
-                            return actionSuccess(t, par1Action3);
-                        })
-
-                    .End()
-                    .Sequence("Sequence2")
-                        .Do(seq2Action1, t =>
-                        {
-                            return actionSuccess(t, seq2Action1);
-                        })
-                        .Do(seq2Action2, t =>
-                        {
-                            return actionSuccess(t, seq2Action2);
-                        })
-                        .Do(seq2Action3, t =>
-                        {
-                            return actionSuccess(t, seq2Action3);
-                        })
-                .End()
-                .Build();
-            Console.WriteLine("Finished Buidling Behavior Tree 2 !");
-        }
+      
         public bool evalActionTrue(TimeData t, string aValue)
         {
             callData.Add(aValue + t.deltaTime, FevalActionTrue);
@@ -282,9 +150,12 @@ namespace tests
         }
         public IEnumerator<BehaviourTreeStatus> actionSuccess(TimeData t, string aValue)
         {
-
             Console.WriteLine(aValue + " --> Action Successful ! at Delta time:" + t.deltaTime);
             callData.Add(aValue + t.deltaTime, FactionSuccess);
+            Console.WriteLine("Return Status Running from actionSuccess ! - coroutine will return and then restart after this point.");
+            yield return BehaviourTreeStatus.Running;
+            int milliseconds = 100;
+            Thread.Sleep(milliseconds);
             yield return BehaviourTreeStatus.Success;
         }
         public IEnumerator<BehaviourTreeStatus> actionFail(TimeData t, string aValue)
@@ -292,6 +163,10 @@ namespace tests
             Console.WriteLine(aValue + " --> Action Failed ! at Delta time:" + t.deltaTime);
             //throw new ApplicationException("Node Failure to Execute !!");
             callData.Add(aValue + t.deltaTime, FactionFail);
+            Console.WriteLine("Return Status Running from actionFail ! - coroutine will return and then restart after this point.");
+            yield return BehaviourTreeStatus.Running;
+            int milliseconds = 100;
+            Thread.Sleep(milliseconds);
             yield return BehaviourTreeStatus.Failure;
         }
 
