@@ -18,13 +18,15 @@ namespace FluentBehaviourTree
             this.isRandom = random;
         }
 
-
         // A Selector may be contaminated with other nodes (Condition) or IParentBeahviourTreeNodes over which
         // it's behaviour as a selector is applied. The assumption here is that any item in it's child list
         // should have  selector behaviour applied unless the first one is a condition Action.
         public IEnumerator<BehaviourTreeStatus> Tick(TimeData time)
         {
-             int skipOne = 0;
+            currentStatus   = BehaviourTreeStatus.Running;
+            int skipOne     = 0;
+            int numSuccess  = 0;
+            int numFailed   = 0;
             // check if this is a conditional action
             IBehaviourTreeNode firstNode = children[0];
             if (firstNode is ConditionNode)
@@ -51,30 +53,41 @@ namespace FluentBehaviourTree
             {
                 var childStatus = child.Tick(time);
                 childStatus.MoveNext();
-                currentStatus = childStatus.Current;
-                if (isRunning())
+               
+                if (childStatus.Current == BehaviourTreeStatus.Running)
                 {
                     // keep looping until we exit running mode or we
                     // run out of enum values.
-                    yield return currentStatus;
+                    yield return BehaviourTreeStatus.Running;
                     while (childStatus.MoveNext())
-                    {
-                        currentStatus = childStatus.Current;
-                        if (!isRunning())
+                    {                      
+                        if (childStatus.Current != BehaviourTreeStatus.Running)
                             break;
+                    }
+                    // if node is still running and has run out of values
+                    // this is an error - should always return success/failure
+                    // eventually.
+                    if (childStatus.Current == BehaviourTreeStatus.Running)
+                    {
+                        child.currentStatus = BehaviourTreeStatus.Failure;
                     }
                 }
                 // On exit above, status should be success or fail 
                 // if success, then exit selector
-                if (isSuccess())
+                if (childStatus.Current == BehaviourTreeStatus.Success)
                 {
-                    yield return currentStatus;
-                    yield break;
-                }
+                    ++numSuccess;
+                      break;
+                } else  ++numFailed;
               
             }
+            if (numSuccess > 0)
+                currentStatus = BehaviourTreeStatus.Success;
+            else
+                currentStatus = BehaviourTreeStatus.Failure;
 
             yield return currentStatus;
+            yield break;
         }
 
         // randomize a list
