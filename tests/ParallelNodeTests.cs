@@ -29,7 +29,7 @@ namespace tests
             var mockChild1 = new Mock<IBehaviourTreeNode>();
             mockChild1
                 .Setup(m => m.Tick(time))
-                .Returns(TreeStatus.getStatus(BehaviourTreeStatus.Running))
+                .Returns(TreeStatus.getStatus(BehaviourTreeStatus.Success))
                 .Callback(() =>
                 {
                     Assert.Equal(1, ++callOrder);
@@ -77,7 +77,7 @@ namespace tests
             var mockChild3 = new Mock<IBehaviourTreeNode>();
             mockChild3
                 .Setup(m => m.Tick(time))
-                .Returns(TreeStatus.getStatus(BehaviourTreeStatus.Running));
+                .Returns(TreeStatus.getStatus(BehaviourTreeStatus.Success));
 
             testObject.AddChild(mockChild1.Object);
             testObject.AddChild(mockChild2.Object);
@@ -111,7 +111,7 @@ namespace tests
             var mockChild3 = new Mock<IBehaviourTreeNode>();
             mockChild3
                 .Setup(m => m.Tick(time))
-                .Returns(TreeStatus.getStatus(BehaviourTreeStatus.Running));
+                .Returns(TreeStatus.getStatus(BehaviourTreeStatus.Failure));
 
             testObject.AddChild(mockChild1.Object);
             testObject.AddChild(mockChild2.Object);

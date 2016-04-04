@@ -31,7 +31,8 @@ namespace FluentBehaviourTree
         {
            
             currentStatus = BehaviourTreeStatus.Running;
-            while (!isComplete())
+
+            while (isRunning())
             {
                 numChildrenSuceeded = 0;
                 numChildrenFailed = 0;
@@ -40,6 +41,19 @@ namespace FluentBehaviourTree
                 {
                     var childStatus = child.Tick(time);
                     childStatus.MoveNext();
+
+                    if (childStatus.Current == BehaviourTreeStatus.Running)
+                    {
+                        // keep looping until we exit running mode or we
+                        // run out of enum values.
+                        yield return childStatus.Current;
+                        while (childStatus.MoveNext())
+                        {
+                            if (childStatus.Current != BehaviourTreeStatus.Running)
+                                break;
+                            yield return childStatus.Current;
+                        }
+                    }
                     switch (childStatus.Current)
                     {
                         case BehaviourTreeStatus.Success: ++numChildrenSuceeded; break;
@@ -50,22 +64,17 @@ namespace FluentBehaviourTree
                 if (numRequiredToSucceed > 0 && numChildrenSuceeded >= numRequiredToSucceed)
                 {
                     currentStatus = BehaviourTreeStatus.Success;
-                    yield return currentStatus;
-                    yield break;
                 }
                 else
                 if (numRequiredToFail > 0 && numChildrenFailed >= numRequiredToFail)
                 {
-
                     currentStatus = BehaviourTreeStatus.Failure;
-                    yield return currentStatus;
-                    yield break;
                 }
                 else {
-                    // Keep Running until we meet our goal of successes or failures
+                    // Return Running if conditions were not met
                     currentStatus = BehaviourTreeStatus.Running;
-                    yield return currentStatus;
                 }
+                yield return currentStatus;
             }
         }
         
