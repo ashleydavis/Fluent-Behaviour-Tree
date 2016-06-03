@@ -97,9 +97,25 @@
         /// <summary>
         /// Create a selector node.
         /// </summary>
-        public BehaviourTreeBuilder<TTickData> Selector(string name)
+        public BehaviourTreeBuilder<TTickData> PrioritySelector(string name)
         {
-            var selectorNode = new SelectorNode<TTickData>(name);
+            var selectorNode = new PrioritySelectorNode<TTickData>(name);
+
+            if (parentNodeStack.Count > 0)
+            {
+                parentNodeStack.Peek().AddChild(selectorNode);
+            }
+
+            parentNodeStack.Push(selectorNode);
+            return this;
+        }
+
+        /// <summary>
+        /// Create a selector node.
+        /// </summary>
+        public BehaviourTreeBuilder<TTickData> PropabilitySelector(string name)
+        {
+            var selectorNode = new ProbabilitySelectorNode<TTickData>(name);
 
             if (parentNodeStack.Count > 0)
             {
