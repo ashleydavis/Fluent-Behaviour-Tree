@@ -1,14 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace FluentBehaviourTree
+﻿namespace FluentBehaviourTree
 {
+    using System.Collections.Generic;
+
+    public class ParallelNode : ParallelNode<TimeData>
+    {
+        public ParallelNode(string name, int numRequiredToFail, int numRequiredToSucceed) : base(name, numRequiredToFail, numRequiredToSucceed)
+        {
+        }
+    }
+
     /// <summary>
     /// Runs childs nodes in parallel.
     /// </summary>
-    public class ParallelNode : IParentBehaviourTreeNode
+    public class ParallelNode<TTickData> : IParentBehaviourTreeNode<TTickData>
     {
         /// <summary>
         /// Name of the node.
@@ -18,7 +22,7 @@ namespace FluentBehaviourTree
         /// <summary>
         /// List of child nodes.
         /// </summary>
-        private List<IBehaviourTreeNode> children = new List<IBehaviourTreeNode>();
+        private List<IBehaviourTreeNode<TTickData>> children = new List<IBehaviourTreeNode<TTickData>>();
 
         /// <summary>
         /// Number of child failures required to terminate with failure.
@@ -37,7 +41,7 @@ namespace FluentBehaviourTree
             this.numRequiredToSucceed = numRequiredToSucceed;
         }
 
-        public BehaviourTreeStatus Tick(TimeData time)
+        public BehaviourTreeStatus Tick(TTickData time)
         {
             var numChildrenSuceeded = 0;
             var numChildrenFailed = 0;
@@ -65,7 +69,7 @@ namespace FluentBehaviourTree
             return BehaviourTreeStatus.Running;
         }
 
-        public void AddChild(IBehaviourTreeNode child)
+        public void AddChild(IBehaviourTreeNode<TTickData> child)
         {
             children.Add(child);
         }

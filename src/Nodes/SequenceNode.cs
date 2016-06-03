@@ -1,14 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace FluentBehaviourTree
+﻿namespace FluentBehaviourTree
 {
+    using System.Collections.Generic;
+
+    public class SequenceNode : SequenceNode<TimeData>
+    {
+        public SequenceNode(string name) : base(name)
+        {
+        }
+    }
+
     /// <summary>
     /// Runs child nodes in sequence, until one fails.
     /// </summary>
-    public class SequenceNode : IParentBehaviourTreeNode
+    public class SequenceNode<TTickData> : IParentBehaviourTreeNode<TTickData>
     {
         /// <summary>
         /// Name of the node.
@@ -18,14 +22,14 @@ namespace FluentBehaviourTree
         /// <summary>
         /// List of child nodes.
         /// </summary>
-        private List<IBehaviourTreeNode> children = new List<IBehaviourTreeNode>(); //todo: this could be optimized as a baked array.
+        private List<IBehaviourTreeNode<TTickData>> children = new List<IBehaviourTreeNode<TTickData>>(); //todo: this could be optimized as a baked array.
 
         public SequenceNode(string name)
         {
             this.name = name;
         }
 
-        public BehaviourTreeStatus Tick(TimeData time)
+        public BehaviourTreeStatus Tick(TTickData time)
         {
             foreach (var child in children)
             {
@@ -42,7 +46,7 @@ namespace FluentBehaviourTree
         /// <summary>
         /// Add a child to the sequence.
         /// </summary>
-        public void AddChild(IBehaviourTreeNode child)
+        public void AddChild(IBehaviourTreeNode<TTickData> child)
         {
             children.Add(child);
         }

@@ -29,12 +29,12 @@ A behaviour tree is created through *BehaviourTreeBuilder*. The tree is returned
 
 	...
 
-	IBehaviourTreeNode tree;
+	IBehaviourTreeNode<TimeData> tree;
 
 	public void Startup()
 	{
-		var builder = new BehaviourTreeBuilder();
-		this.tree = BehaviourTreeBuilder
+		var builder = new BehaviourTreeBuilder<TimeData>();
+		this.tree = builder
 			.Sequence("my-sequence")
 				.Do(t => 
 				{
@@ -117,11 +117,33 @@ Runs all child nodes in parallel. Continues to run until a required number of ch
 		})		
 	.End()
 
-### Selector
+### Priority Selector
 
 Runs child nodes in sequence until it finds one that *succeeds*. Succeeds when it finds the first child that *succeeds*. For child nodes that *fail* it moves forward to the next child node. While a child is *running* it stays on that child node without moving forward. 
 
-	.Selector("my-selector")
+	.PrioritySelector("my-selector")
+		.Do(t => 
+		{
+			// Action 1.
+			return BehaviourTreeStatus.Failure; // Fail, move onto next child.
+		}); 
+		.Do(t => 
+		{
+			// Action 2.
+			return BehaviourTreeStatus.Success; // Success, stop here.
+		})		
+		.Do(t => 
+		{
+			// Action 3.
+			return BehaviourTreeStatus.Success; // Doesn't get this far. 
+		})		
+	.End()
+
+### Probability Selector
+
+Runs a random child node until it *succeeds* or *fails*. It returns the status of the child that was run. While a child is *running* it stays on that child node without selecting a new child. 
+
+	.ProbabilitySelector("my-selector")
 		.Do(t => 
 		{
 			// Action 1.
@@ -184,10 +206,10 @@ Behaviour trees can be nested to any depth, for example:
 
 Separately created sub-trees can be spliced into parent trees. This makes it easy to build behaviour trees from reusable components.
 
-	private IBehaviourTreeNode CreateSubTree()
+	private IBehaviourTreeNode<TimeData> CreateSubTree()
 	{
-		var builder = new BehaviourTreeBuilder();
-		return BehaviourTreeBuilder
+		var builder = new BehaviourTreeBuilder<TimeData>();
+		return builder
 			.Sequence("my-sub-tree")
 				.Do(t => 
 				{
@@ -205,8 +227,8 @@ Separately created sub-trees can be spliced into parent trees. This makes it eas
 
 	public void Startup()
 	{
-		var builder = new BehaviourTreeBuilder();
-		this.tree = BehaviourTreeBuilder
+		var builder = new BehaviourTreeBuilder<TimeData>();
+		this.tree = builder
 			.Sequence("my-parent-sequence")
 				.Splice(CreateSubTree()) // Splice the child tree in.
 				.Splice(CreateSubTree()) // Splice again.

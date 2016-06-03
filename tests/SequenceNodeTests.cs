@@ -1,13 +1,9 @@
-﻿using FluentBehaviourTree;
-using Moq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Xunit;
-
-namespace tests
+﻿namespace tests
 {
+    using FluentBehaviourTree;
+    using Moq;
+    using Xunit;
+
     public class SequenceNodeTests
     {
         SequenceNode testObject;
@@ -16,7 +12,7 @@ namespace tests
         {
             testObject = new SequenceNode("some-sequence");
         }
-        
+
         [Fact]
         public void can_run_all_children_in_order()
         {

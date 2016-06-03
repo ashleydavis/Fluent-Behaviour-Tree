@@ -1,12 +1,9 @@
-﻿using FluentBehaviourTree;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Xunit;
-
-namespace tests
+﻿namespace tests
 {
+    using FluentBehaviourTree;
+    using System;
+    using Xunit;
+
     public class BehaviourTreeBuilderTests
     {
         BehaviourTreeBuilder testObject;
@@ -50,11 +47,11 @@ namespace tests
 
             var node = testObject
                 .Inverter("some-inverter")
-                    .Do("some-node", t =>BehaviourTreeStatus.Success)
+                    .Do("some-node", t => BehaviourTreeStatus.Success)
                 .End()
                 .Build();
 
-            Assert.IsType<InverterNode>(node);
+            Assert.IsType<InverterNode<TimeData>>(node);
             Assert.Equal(BehaviourTreeStatus.Failure, node.Tick(new TimeData()));
         }
 
@@ -83,7 +80,7 @@ namespace tests
                 .End()
                 .Build();
 
-            Assert.IsType<InverterNode>(node);
+            Assert.IsType<InverterNode<TimeData>>(node);
             Assert.Equal(BehaviourTreeStatus.Failure, node.Tick(new TimeData()));
         }
 
@@ -100,7 +97,7 @@ namespace tests
                 .End()
                 .Build();
 
-            Assert.IsType<InverterNode>(node);
+            Assert.IsType<InverterNode<TimeData>>(node);
             Assert.Equal(BehaviourTreeStatus.Success, node.Tick(new TimeData()));
         }
 
@@ -129,7 +126,7 @@ namespace tests
 
             var sequence = testObject
                 .Sequence("some-sequence")
-                    .Do("some-action-1", t => 
+                    .Do("some-action-1", t =>
                     {
                         ++invokeCount;
                         return BehaviourTreeStatus.Success;
@@ -142,7 +139,7 @@ namespace tests
                 .End()
                 .Build();
 
-            Assert.IsType<SequenceNode>(sequence);
+            Assert.IsType<SequenceNode<TimeData>>(sequence);
             Assert.Equal(BehaviourTreeStatus.Success, sequence.Tick(new TimeData()));
             Assert.Equal(2, invokeCount);
         }
@@ -169,20 +166,20 @@ namespace tests
                 .End()
                 .Build();
 
-            Assert.IsType<ParallelNode>(parallel);
+            Assert.IsType<ParallelNode<TimeData>>(parallel);
             Assert.Equal(BehaviourTreeStatus.Success, parallel.Tick(new TimeData()));
             Assert.Equal(2, invokeCount);
         }
 
         [Fact]
-        public void can_create_selector()
+        public void can_create_priority_selector()
         {
             Init();
 
             var invokeCount = 0;
 
             var parallel = testObject
-                .Selector("some-selector")
+                .PrioritySelector("some-selector")
                     .Do("some-action-1", t =>
                     {
                         ++invokeCount;
@@ -196,9 +193,44 @@ namespace tests
                 .End()
                 .Build();
 
-            Assert.IsType<SelectorNode>(parallel);
+            Assert.IsType<PrioritySelectorNode<TimeData>>(parallel);
             Assert.Equal(BehaviourTreeStatus.Success, parallel.Tick(new TimeData()));
             Assert.Equal(2, invokeCount);
+        }
+
+        [Fact]
+        public void can_create_probability_selector()
+        {
+            Init();
+
+            var invokeCount = 0;
+
+            var propability = testObject
+                .PropabilitySelector("some-selector")
+                    .Do("some-action-1", t =>
+                    {
+                        ++invokeCount;
+                        return BehaviourTreeStatus.Success;
+                    })
+                    .Do("some-action-2", t =>
+                    {
+                        ++invokeCount;
+                        return BehaviourTreeStatus.Success;
+                    })
+                    .Do("some-action-3", t =>
+                    {
+                        ++invokeCount;
+                        return BehaviourTreeStatus.Success;
+                    })
+                .End()
+                .Build();
+
+            Assert.IsType<ProbabilitySelectorNode<TimeData>>(propability);
+            for (int i = 0; i < 100; i++)
+            {
+                Assert.Equal(BehaviourTreeStatus.Success, propability.Tick(new TimeData()));
+            }
+            Assert.Equal(100, invokeCount);
         }
 
         [Fact]
@@ -220,7 +252,7 @@ namespace tests
 
             var tree = testObject
                 .Sequence("parent-tree")
-                    .Splice(spliced)                    
+                    .Splice(spliced)
                 .End()
                 .Build();
 
@@ -250,6 +282,17 @@ namespace tests
             {
                 testObject
                     .Splice(spliced);
+            });
+        }
+
+        [Fact]
+        public void splicing_null_throws_exception()
+        {
+            Init();
+
+            Assert.Throws<ArgumentNullException>(() =>
+            {
+                testObject.Splice(null);
             });
         }
     }

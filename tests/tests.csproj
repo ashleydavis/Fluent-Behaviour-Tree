@@ -54,8 +54,9 @@
     <Compile Include="BehaviourTreeBuilderTests.cs" />
     <Compile Include="InverterNodeTests.cs" />
     <Compile Include="ParallelNodeTests.cs" />
+    <Compile Include="ProbabilitySelectorNodeTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SelectorNodeTests.cs" />
+    <Compile Include="PrioritySelectorNodeTests.cs" />
     <Compile Include="SequenceNodeTests.cs" />
   </ItemGroup>
   <ItemGroup>

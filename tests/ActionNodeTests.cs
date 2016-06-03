@@ -1,12 +1,8 @@
-﻿using FluentBehaviourTree;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Xunit;
-
-namespace tests
+﻿namespace tests
 {
+    using FluentBehaviourTree;
+    using Xunit;
+
     public class ActionNodeTests
     {
         [Fact]
@@ -15,9 +11,9 @@ namespace tests
             var time = new TimeData();
 
             var invokeCount = 0;
-            var testObject = 
+            var testObject =
                 new ActionNode(
-                    "some-action", 
+                    "some-action",
                     t =>
                     {
                         Assert.Equal(time, t);
@@ -28,7 +24,7 @@ namespace tests
                 );
 
             Assert.Equal(BehaviourTreeStatus.Running, testObject.Tick(time));
-            Assert.Equal(1, invokeCount);            
+            Assert.Equal(1, invokeCount);
         }
     }
 }

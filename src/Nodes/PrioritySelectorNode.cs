@@ -1,14 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace FluentBehaviourTree
+﻿namespace FluentBehaviourTree
 {
+    using System.Collections.Generic;
+
+    public class PrioritySelectorNode : PrioritySelectorNode<TimeData>
+    {
+        public PrioritySelectorNode(string name) : base(name)
+        {
+        }
+    }
     /// <summary>
     /// Selects the first node that succeeds. Tries successive nodes until it finds one that doesn't fail.
     /// </summary>
-    public class SelectorNode : IParentBehaviourTreeNode
+    public class PrioritySelectorNode<TTickData> : IParentBehaviourTreeNode<TTickData>
     {
         /// <summary>
         /// The name of the node.
@@ -18,14 +21,14 @@ namespace FluentBehaviourTree
         /// <summary>
         /// List of child nodes.
         /// </summary>
-        private List<IBehaviourTreeNode> children = new List<IBehaviourTreeNode>(); //todo: optimization, bake this to an array.
+        private List<IBehaviourTreeNode<TTickData>> children = new List<IBehaviourTreeNode<TTickData>>(); //todo: optimization, bake this to an array.
 
-        public SelectorNode(string name)
+        public PrioritySelectorNode(string name)
         {
             this.name = name;
         }
 
-        public BehaviourTreeStatus Tick(TimeData time)
+        public BehaviourTreeStatus Tick(TTickData time)
         {
             foreach (var child in children)
             {
@@ -42,7 +45,7 @@ namespace FluentBehaviourTree
         /// <summary>
         /// Add a child node to the selector.
         /// </summary>
-        public void AddChild(IBehaviourTreeNode child)
+        public void AddChild(IBehaviourTreeNode<TTickData> child)
         {
             children.Add(child);
         }

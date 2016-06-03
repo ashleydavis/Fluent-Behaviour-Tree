@@ -1,13 +1,10 @@
-﻿using FluentBehaviourTree;
-using Moq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Xunit;
-
-namespace tests
+﻿namespace tests
 {
+    using FluentBehaviourTree;
+    using Moq;
+    using System;
+    using Xunit;
+
     public class InverterNodeTests
     {
         InverterNode testObject;
@@ -93,7 +90,7 @@ namespace tests
             testObject.AddChild(mockChildNode1.Object);
 
             var mockChildNode2 = new Mock<IBehaviourTreeNode>();
-            Assert.Throws<ApplicationException>(() => 
+            Assert.Throws<ApplicationException>(() =>
                 testObject.AddChild(mockChildNode2.Object)
             );
         }

@@ -1,20 +1,16 @@
-﻿using FluentBehaviourTree;
-using Moq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Xunit;
-
-namespace tests
+﻿namespace tests
 {
-    public class SelectorNodeTests
+    using FluentBehaviourTree;
+    using Moq;
+    using Xunit;
+
+    public class PrioritySelectorNodeTests
     {
-        SelectorNode testObject;
+        PrioritySelectorNode testObject;
 
         void Init()
         {
-            testObject = new SelectorNode("some-selector");
+            testObject = new PrioritySelectorNode("some-selector");
         }
 
         [Fact]
