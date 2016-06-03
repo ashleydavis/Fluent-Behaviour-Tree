@@ -172,7 +172,7 @@
         }
 
         [Fact]
-        public void can_create_selector()
+        public void can_create_priority_selector()
         {
             Init();
 
@@ -196,6 +196,41 @@
             Assert.IsType<PrioritySelectorNode<TimeData>>(parallel);
             Assert.Equal(BehaviourTreeStatus.Success, parallel.Tick(new TimeData()));
             Assert.Equal(2, invokeCount);
+        }
+
+        [Fact]
+        public void can_create_probability_selector()
+        {
+            Init();
+
+            var invokeCount = 0;
+
+            var propability = testObject
+                .PropabilitySelector("some-selector")
+                    .Do("some-action-1", t =>
+                    {
+                        ++invokeCount;
+                        return BehaviourTreeStatus.Success;
+                    })
+                    .Do("some-action-2", t =>
+                    {
+                        ++invokeCount;
+                        return BehaviourTreeStatus.Success;
+                    })
+                    .Do("some-action-3", t =>
+                    {
+                        ++invokeCount;
+                        return BehaviourTreeStatus.Success;
+                    })
+                .End()
+                .Build();
+
+            Assert.IsType<ProbabilitySelectorNode<TimeData>>(propability);
+            for (int i = 0; i < 100; i++)
+            {
+                Assert.Equal(BehaviourTreeStatus.Success, propability.Tick(new TimeData()));
+            }
+            Assert.Equal(100, invokeCount);
         }
 
         [Fact]
@@ -247,6 +282,17 @@
             {
                 testObject
                     .Splice(spliced);
+            });
+        }
+
+        [Fact]
+        public void splicing_null_throws_exception()
+        {
+            Init();
+
+            Assert.Throws<ArgumentNullException>(() =>
+            {
+                testObject.Splice(null);
             });
         }
     }

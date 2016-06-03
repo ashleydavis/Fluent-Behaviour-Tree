@@ -111,6 +111,22 @@
         }
 
         /// <summary>
+        /// Create a selector node.
+        /// </summary>
+        public BehaviourTreeBuilder<TTickData> PropabilitySelector(string name)
+        {
+            var selectorNode = new ProbabilitySelectorNode<TTickData>(name);
+
+            if (parentNodeStack.Count > 0)
+            {
+                parentNodeStack.Peek().AddChild(selectorNode);
+            }
+
+            parentNodeStack.Push(selectorNode);
+            return this;
+        }
+
+        /// <summary>
         /// Splice a sub tree into the parent tree.
         /// </summary>
         public BehaviourTreeBuilder<TTickData> Splice(IBehaviourTreeNode<TTickData> subTree)
