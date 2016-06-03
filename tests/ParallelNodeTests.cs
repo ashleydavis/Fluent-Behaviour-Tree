@@ -1,13 +1,9 @@
-﻿using FluentBehaviourTree;
-using Moq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Xunit;
-
-namespace tests
+﻿namespace tests
 {
+    using FluentBehaviourTree;
+    using Moq;
+    using Xunit;
+
     public class ParallelNodeTests
     {
         ParallelNode testObject;

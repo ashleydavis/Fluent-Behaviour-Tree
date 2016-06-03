@@ -1,14 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace FluentBehaviourTree
+﻿namespace FluentBehaviourTree
 {
+    using System;
+
+    public class InverterNode : InverterNode<TimeData>
+    {
+        public InverterNode(string name) : base(name)
+        {
+        }
+    }
+
     /// <summary>
     /// Decorator node that inverts the success/failure of its child.
     /// </summary>
-    public class InverterNode : IParentBehaviourTreeNode
+    public class InverterNode<TTickData> : IParentBehaviourTreeNode<TTickData>
     {
         /// <summary>
         /// Name of the node.
@@ -18,14 +22,14 @@ namespace FluentBehaviourTree
         /// <summary>
         /// The child to be inverted.
         /// </summary>
-        private IBehaviourTreeNode childNode;
+        private IBehaviourTreeNode<TTickData> childNode;
 
         public InverterNode(string name)
         {
             this.name = name;
         }
 
-        public BehaviourTreeStatus Tick(TimeData time)
+        public BehaviourTreeStatus Tick(TTickData time)
         {
             if (childNode == null)
             {
@@ -50,7 +54,7 @@ namespace FluentBehaviourTree
         /// <summary>
         /// Add a child to the parent node.
         /// </summary>
-        public void AddChild(IBehaviourTreeNode child)
+        public void AddChild(IBehaviourTreeNode<TTickData> child)
         {
             if (this.childNode != null)
             {

@@ -1,18 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace FluentBehaviourTree
+﻿namespace FluentBehaviourTree
 {
+    public interface IBehaviourTreeNode : IBehaviourTreeNode<TimeData>
+    { }
+
     /// <summary>
     /// Interface for behaviour tree nodes.
     /// </summary>
-    public interface IBehaviourTreeNode
+    public interface IBehaviourTreeNode<TTickData>
     {
         /// <summary>
         /// Update the time of the behaviour tree.
         /// </summary>
-        BehaviourTreeStatus Tick(TimeData time);
+        BehaviourTreeStatus Tick(TTickData time);
     }
 }
