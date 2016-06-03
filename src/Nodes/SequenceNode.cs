@@ -2,7 +2,7 @@
 {
     using System.Collections.Generic;
 
-    public class SequenceNode : SelectorNode<TimeData>
+    public class SequenceNode : SequenceNode<TimeData>
     {
         public SequenceNode(string name) : base(name)
         {
