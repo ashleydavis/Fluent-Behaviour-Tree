@@ -29,12 +29,12 @@ A behaviour tree is created through *BehaviourTreeBuilder*. The tree is returned
 
 	...
 
-	IBehaviourTreeNode tree;
+	IBehaviourTreeNode<TimeData> tree;
 
 	public void Startup()
 	{
-		var builder = new BehaviourTreeBuilder();
-		this.tree = BehaviourTreeBuilder
+		var builder = new BehaviourTreeBuilder<TimeData>();
+		this.tree = builder
 			.Sequence("my-sequence")
 				.Do(t => 
 				{
@@ -206,10 +206,10 @@ Behaviour trees can be nested to any depth, for example:
 
 Separately created sub-trees can be spliced into parent trees. This makes it easy to build behaviour trees from reusable components.
 
-	private IBehaviourTreeNode CreateSubTree()
+	private IBehaviourTreeNode<TimeData> CreateSubTree()
 	{
-		var builder = new BehaviourTreeBuilder();
-		return BehaviourTreeBuilder
+		var builder = new BehaviourTreeBuilder<TimeData>();
+		return builder
 			.Sequence("my-sub-tree")
 				.Do(t => 
 				{
@@ -227,8 +227,8 @@ Separately created sub-trees can be spliced into parent trees. This makes it eas
 
 	public void Startup()
 	{
-		var builder = new BehaviourTreeBuilder();
-		this.tree = BehaviourTreeBuilder
+		var builder = new BehaviourTreeBuilder<TimeData>();
+		this.tree = builder
 			.Sequence("my-parent-sequence")
 				.Splice(CreateSubTree()) // Splice the child tree in.
 				.Splice(CreateSubTree()) // Splice again.
