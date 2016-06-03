@@ -19,6 +19,8 @@
         /// </summary>
         private readonly string name;
 
+        private IBehaviourTreeNode<TTickData> selectedNode;
+        private BehaviourTreeStatus childStatus;
         /// <summary>
         /// List of child nodes.
         /// </summary>
@@ -36,8 +38,12 @@
 
         public BehaviourTreeStatus Tick(TTickData time)
         {
-            var selected = children[rng.Next(children.Count)];
-            return selected.Tick(time);
+            if (childStatus != BehaviourTreeStatus.Running)
+            {
+                selectedNode = children[rng.Next(children.Count)];
+            }
+            childStatus = selectedNode.Tick(time);
+            return childStatus;
         }
     }
 }

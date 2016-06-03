@@ -43,9 +43,9 @@
             {
                 Assert.InRange(testObject.Tick(time), BehaviourTreeStatus.Success, BehaviourTreeStatus.Running);
             }
-            mockChild1.Verify(m => m.Tick(time), Times.Between(20, 40, Range.Inclusive));
-            mockChild2.Verify(m => m.Tick(time), Times.Between(20, 40, Range.Inclusive));
-            mockChild3.Verify(m => m.Tick(time), Times.Between(20, 40, Range.Inclusive));
+            mockChild1.Verify(m => m.Tick(time), Times.Between(0, 33, Range.Inclusive));
+            mockChild2.Verify(m => m.Tick(time), Times.Between(33, 100, Range.Inclusive));
+            mockChild3.Verify(m => m.Tick(time), Times.Between(0, 33, Range.Inclusive));
         }
     }
 }
