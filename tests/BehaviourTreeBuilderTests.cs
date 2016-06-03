@@ -179,7 +179,7 @@
             var invokeCount = 0;
 
             var parallel = testObject
-                .Selector("some-selector")
+                .PrioritySelector("some-selector")
                     .Do("some-action-1", t =>
                     {
                         ++invokeCount;
@@ -193,7 +193,7 @@
                 .End()
                 .Build();
 
-            Assert.IsType<SelectorNode<TimeData>>(parallel);
+            Assert.IsType<PrioritySelectorNode<TimeData>>(parallel);
             Assert.Equal(BehaviourTreeStatus.Success, parallel.Tick(new TimeData()));
             Assert.Equal(2, invokeCount);
         }

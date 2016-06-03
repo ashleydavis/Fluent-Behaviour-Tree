@@ -2,16 +2,16 @@
 {
     using System.Collections.Generic;
 
-    public class SelectorNode : SelectorNode<TimeData>
+    public class PrioritySelectorNode : PrioritySelectorNode<TimeData>
     {
-        public SelectorNode(string name) : base(name)
+        public PrioritySelectorNode(string name) : base(name)
         {
         }
     }
     /// <summary>
     /// Selects the first node that succeeds. Tries successive nodes until it finds one that doesn't fail.
     /// </summary>
-    public class SelectorNode<TTickData> : IParentBehaviourTreeNode<TTickData>
+    public class PrioritySelectorNode<TTickData> : IParentBehaviourTreeNode<TTickData>
     {
         /// <summary>
         /// The name of the node.
@@ -23,7 +23,7 @@
         /// </summary>
         private List<IBehaviourTreeNode<TTickData>> children = new List<IBehaviourTreeNode<TTickData>>(); //todo: optimization, bake this to an array.
 
-        public SelectorNode(string name)
+        public PrioritySelectorNode(string name)
         {
             this.name = name;
         }

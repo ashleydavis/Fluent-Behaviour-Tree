@@ -4,13 +4,13 @@
     using Moq;
     using Xunit;
 
-    public class SelectorNodeTests
+    public class PrioritySelectorNodeTests
     {
-        SelectorNode testObject;
+        PrioritySelectorNode testObject;
 
         void Init()
         {
-            testObject = new SelectorNode("some-selector");
+            testObject = new PrioritySelectorNode("some-selector");
         }
 
         [Fact]
