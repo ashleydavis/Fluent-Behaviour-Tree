@@ -1,50 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace FluentBehaviourTree
+﻿namespace FluentBehaviourTree
 {
     /// <summary>
     /// Selects the first node that succeeds. Tries successive nodes until it finds one that doesn't fail.
     /// </summary>
-    public class SelectorNode : IParentBehaviourTreeNode
+    public class SelectorNode : ParentBehaviourTreeNode
     {
-        /// <summary>
-        /// The name of the node.
-        /// </summary>
-        private string name;
+        public SelectorNode(string name) : base(name) { }
 
-        /// <summary>
-        /// List of child nodes.
-        /// </summary>
-        private List<IBehaviourTreeNode> children = new List<IBehaviourTreeNode>(); //todo: optimization, bake this to an array.
-
-        public SelectorNode(string name)
+        protected override BehaviourTreeStatus AbstractTick(TimeData time)
         {
-            this.name = name;
-        }
-
-        public BehaviourTreeStatus Tick(TimeData time)
-        {
-            foreach (var child in children)
+            for (int i = 0; i < childCount; i++)
             {
+                var child = this[i];
                 var childStatus = child.Tick(time);
                 if (childStatus != BehaviourTreeStatus.Failure)
                 {
                     return childStatus;
                 }
             }
-
             return BehaviourTreeStatus.Failure;
-        }
-
-        /// <summary>
-        /// Add a child node to the selector.
-        /// </summary>
-        public void AddChild(IBehaviourTreeNode child)
-        {
-            children.Add(child);
         }
     }
 }

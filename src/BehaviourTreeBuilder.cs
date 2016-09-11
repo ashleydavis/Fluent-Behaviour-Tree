@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace FluentBehaviourTree
 {
@@ -13,12 +11,12 @@ namespace FluentBehaviourTree
         /// <summary>
         /// Last node created.
         /// </summary>
-        private IBehaviourTreeNode curNode = null;
+        private BehaviourTreeNode curNode = null;
 
         /// <summary>
         /// Stack node nodes that we are build via the fluent API.
         /// </summary>
-        private Stack<IParentBehaviourTreeNode> parentNodeStack = new Stack<IParentBehaviourTreeNode>();
+        private Stack<ParentBehaviourTreeNode> parentNodeStack = new Stack<ParentBehaviourTreeNode>();
 
         /// <summary>
         /// Create an action node.
@@ -110,7 +108,7 @@ namespace FluentBehaviourTree
         /// <summary>
         /// Splice a sub tree into the parent tree.
         /// </summary>
-        public BehaviourTreeBuilder Splice(IBehaviourTreeNode subTree)
+        public BehaviourTreeBuilder Splice(BehaviourTreeNode subTree)
         {
             if (subTree == null)
             {
@@ -129,11 +127,16 @@ namespace FluentBehaviourTree
         /// <summary>
         /// Build the actual tree.
         /// </summary>
-        public IBehaviourTreeNode Build()
+        public BehaviourTreeNode Build()
         {
             if (curNode == null)
             {
                 throw new ApplicationException("Can't create a behaviour tree with zero nodes");
+            }
+            var curNodeTree = curNode as ParentBehaviourTreeNode;
+            if (curNodeTree != null)
+            {
+                BakeTreeRecursively(curNodeTree);
             }
             return curNode;
         }
@@ -145,6 +148,24 @@ namespace FluentBehaviourTree
         {
             curNode = parentNodeStack.Pop();
             return this;
+        }
+
+        /// <summary>
+        /// Bakes all of the tree execution information recursively.
+        /// </summary>
+        /// <param name="curNodeTree"></param>
+        private void BakeTreeRecursively(ParentBehaviourTreeNode curNodeTree)
+        {
+            for (int i = 0; i < curNodeTree.childCount; i++)
+            {
+                var child = curNodeTree[i];
+                child.BakeData();
+                var childAsParent = child as ParentBehaviourTreeNode;
+                if (childAsParent != null)
+                {
+                    BakeTreeRecursively(childAsParent);
+                }
+            }
         }
     }
 }
