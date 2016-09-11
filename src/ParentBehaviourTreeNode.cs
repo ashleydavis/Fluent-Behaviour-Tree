@@ -16,6 +16,9 @@ namespace FluentBehaviourTree
         /// </summary>
         private BehaviourTreeNode[] children = new BehaviourTreeNode[1];
 
+        /// <summary>
+        /// The number of children added to this node
+        /// </summary>
         public int childCount {
             get {
                 if (hasDataBeenBaked)

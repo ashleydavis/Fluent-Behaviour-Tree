@@ -13,11 +13,15 @@
         /// The result of the last execution
         /// </summary>
         public BehaviourTreeStatus lastExecutionStatus { get; private set; }
+        /// <summary>
+        /// True if the Builder that made this node was built.
+        /// </summary>
         protected bool hasDataBeenBaked { get; private set; }
 
         public BehaviourTreeNode(string name)
         {
             this.name = name;
+            lastExecutionStatus = BehaviourTreeStatus.Failure;
         }
 
         /// <summary>

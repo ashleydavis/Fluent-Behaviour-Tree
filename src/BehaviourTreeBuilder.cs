@@ -27,7 +27,10 @@ namespace FluentBehaviourTree
             {
                 throw new ApplicationException("Can't create an unnested ActionNode, it must be a leaf node.");
             }
-
+            if (string.IsNullOrEmpty(name))
+            {
+                name = fn.Method.Name;
+            }
             var actionNode = new ActionNode(name, fn);
             parentNodeStack.Peek().AddChild(actionNode);
             return this;
@@ -38,6 +41,10 @@ namespace FluentBehaviourTree
         /// </summary>
         public BehaviourTreeBuilder Condition(string name, Func<TimeData, bool> fn)
         {
+            if (string.IsNullOrEmpty(name))
+            {
+                name = fn.Method.Name;
+            }
             return Do(name, t => fn(t) ? BehaviourTreeStatus.Success : BehaviourTreeStatus.Failure);
         }
 
