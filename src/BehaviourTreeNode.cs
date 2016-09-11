@@ -14,6 +14,10 @@
         /// </summary>
         public BehaviourTreeStatus lastExecutionStatus { get; private set; }
         /// <summary>
+        /// Used to determine if this node has been ticked.
+        /// </summary>
+        public bool hasExecuted { get; private set; }
+        /// <summary>
         /// True if the Builder that made this node was built.
         /// </summary>
         protected bool hasDataBeenBaked { get; private set; }
@@ -30,7 +34,12 @@
         public BehaviourTreeStatus Tick(TimeData time)
         {
             lastExecutionStatus = AbstractTick(time);
+            hasExecuted = true;
             return lastExecutionStatus;
+        }
+        public virtual void ResetLastExecStatus()
+        {
+            hasExecuted = false;
         }
         internal void BakeData()
         {

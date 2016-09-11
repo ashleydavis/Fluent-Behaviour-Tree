@@ -40,7 +40,14 @@ namespace FluentBehaviourTree
                 return _children[index];
             }
         }
-
+        public override void ResetLastExecStatus()
+        {
+            base.ResetLastExecStatus();
+            for (int i = 0; i < childCount; i++)
+            {
+                this[i].ResetLastExecStatus();
+            }
+        }
         /// <summary>
         /// Add a child to the parent node.
         /// </summary>
