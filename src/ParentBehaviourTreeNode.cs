@@ -8,39 +8,33 @@ namespace FluentBehaviourTree
     public abstract class ParentBehaviourTreeNode : BehaviourTreeNode
     {
         /// <summary>
-        /// List of child nodes used for building nodes.
+        /// List of child nodes
         /// </summary>
-        private List<BehaviourTreeNode> _children = new List<BehaviourTreeNode>();
-        /// <summary>
-        /// The baked array of children.
-        /// </summary>
-        private BehaviourTreeNode[] children = new BehaviourTreeNode[1];
+        private List<BehaviourTreeNode> children = new List<BehaviourTreeNode>();
 
         /// <summary>
         /// The number of children added to this node
         /// </summary>
         public int childCount {
             get {
-                if (hasDataBeenBaked)
-                {
-                    return children.Length;
-                }
-                return _children.Count;
+                return children.Count;
             }
         }
 
         public ParentBehaviourTreeNode(string name) : base(name) { }
 
+        /// <summary>
+        /// Retrieve a child node by index.
+        /// </summary>
         public BehaviourTreeNode this[int index] {
             get {
-                if (hasDataBeenBaked)
-                {
-                    return children[index];
-                }
-                return _children[index];
+                return children[index];
             }
         }
-        public override void ResetLastExecStatus()
+        /// <summary>
+        /// Marks that this node and all children have not execute yet.
+        /// </summary>
+        internal override void ResetLastExecStatus()
         {
             base.ResetLastExecStatus();
             for (int i = 0; i < childCount; i++)
@@ -53,17 +47,7 @@ namespace FluentBehaviourTree
         /// </summary>
         public virtual void AddChild(BehaviourTreeNode child)
         {
-            if (!hasDataBeenBaked)
-            {
-                _children.Add(child);
-            }
-        }
-
-        protected override void InternalBakeData()
-        {
-            base.InternalBakeData();
-            children = _children.ToArray();
-            _children.Clear();
+            children.Add(child);
         }
     }
 }

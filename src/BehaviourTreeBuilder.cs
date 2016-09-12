@@ -121,7 +121,6 @@ namespace FluentBehaviourTree
             {
                 throw new ArgumentNullException("subTree");
             }
-
             if (parentNodeStack.Count <= 0)
             {
                 throw new ApplicationException("Can't splice an unnested sub-tree, there must be a parent-tree.");
@@ -140,11 +139,6 @@ namespace FluentBehaviourTree
             {
                 throw new ApplicationException("Can't create a behaviour tree with zero nodes");
             }
-            var curNodeTree = curNode as ParentBehaviourTreeNode;
-            if (curNodeTree != null)
-            {
-                BakeTreeRecursively(curNodeTree);
-            }
             return curNode;
         }
 
@@ -155,24 +149,6 @@ namespace FluentBehaviourTree
         {
             curNode = parentNodeStack.Pop();
             return this;
-        }
-
-        /// <summary>
-        /// Bakes all of the tree execution information recursively.
-        /// </summary>
-        /// <param name="curNodeTree"></param>
-        private void BakeTreeRecursively(ParentBehaviourTreeNode curNodeTree)
-        {
-            for (int i = 0; i < curNodeTree.childCount; i++)
-            {
-                var child = curNodeTree[i];
-                child.BakeData();
-                var childAsParent = child as ParentBehaviourTreeNode;
-                if (childAsParent != null)
-                {
-                    BakeTreeRecursively(childAsParent);
-                }
-            }
         }
     }
 }

@@ -14,13 +14,9 @@
         /// </summary>
         public BehaviourTreeStatus lastExecutionStatus { get; private set; }
         /// <summary>
-        /// Used to determine if this node has been ticked.
+        /// Used to determine if this node has been ticked yet this iteration.
         /// </summary>
         public bool hasExecuted { get; private set; }
-        /// <summary>
-        /// True if the Builder that made this node was built.
-        /// </summary>
-        protected bool hasDataBeenBaked { get; private set; }
 
         public BehaviourTreeNode(string name)
         {
@@ -33,23 +29,18 @@
         /// </summary>
         public BehaviourTreeStatus Tick(TimeData time)
         {
+            ResetLastExecStatus();
             lastExecutionStatus = AbstractTick(time);
             hasExecuted = true;
             return lastExecutionStatus;
         }
-        public virtual void ResetLastExecStatus()
+        /// <summary>
+        /// Marks that this node hasn't executed yet.
+        /// </summary>
+        internal virtual void ResetLastExecStatus()
         {
             hasExecuted = false;
         }
-        internal void BakeData()
-        {
-            if (!hasDataBeenBaked)
-            {
-                InternalBakeData();
-                hasDataBeenBaked = true;
-            }
-        }
-        protected virtual void InternalBakeData() { }
         protected abstract BehaviourTreeStatus AbstractTick(TimeData time);
     }
 }
