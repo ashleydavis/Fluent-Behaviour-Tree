@@ -1,31 +1,28 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace FluentBehaviourTree
 {
     /// <summary>
     /// Decorator node that inverts the success/failure of its child.
     /// </summary>
-    public class InverterNode : IParentBehaviourTreeNode
+    public class InverterNode : ParentBehaviourTreeNode
     {
-        /// <summary>
-        /// Name of the node.
-        /// </summary>
-        private string name;
-
         /// <summary>
         /// The child to be inverted.
         /// </summary>
-        private IBehaviourTreeNode childNode;
-
-        public InverterNode(string name)
-        {
-            this.name = name;
+        private BehaviourTreeNode childNode {
+            get {
+                if (childCount == 0)
+                {
+                    return null;
+                }
+                return this[0];
+            }
         }
 
-        public BehaviourTreeStatus Tick(TimeData time)
+        public InverterNode(string name) : base(name) { }
+
+        protected override BehaviourTreeStatus AbstractTick(TimeData time)
         {
             if (childNode == null)
             {
@@ -47,17 +44,13 @@ namespace FluentBehaviourTree
             }
         }
 
-        /// <summary>
-        /// Add a child to the parent node.
-        /// </summary>
-        public void AddChild(IBehaviourTreeNode child)
+        public override void AddChild(BehaviourTreeNode child)
         {
-            if (this.childNode != null)
+            if (childNode != null)
             {
                 throw new ApplicationException("Can't add more than a single child to InverterNode!");
             }
-
-            this.childNode = child;
+            base.AddChild(child);
         }
     }
 }

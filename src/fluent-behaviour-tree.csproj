@@ -41,8 +41,8 @@
   <ItemGroup>
     <Compile Include="BehaviourTreeBuilder.cs" />
     <Compile Include="BehaviourTreeStatus.cs" />
-    <Compile Include="IParentBehaviourTreeNode.cs" />
-    <Compile Include="IBehaviourTreeNode.cs" />
+    <Compile Include="ParentBehaviourTreeNode.cs" />
+    <Compile Include="BehaviourTreeNode.cs" />
     <Compile Include="Nodes\ActionNode.cs" />
     <Compile Include="Nodes\InverterNode.cs" />
     <Compile Include="Nodes\ParallelNode.cs" />

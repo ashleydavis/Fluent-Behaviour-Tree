@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace FluentBehaviourTree
 {
@@ -13,12 +11,12 @@ namespace FluentBehaviourTree
         /// <summary>
         /// Last node created.
         /// </summary>
-        private IBehaviourTreeNode curNode = null;
+        private BehaviourTreeNode curNode = null;
 
         /// <summary>
         /// Stack node nodes that we are build via the fluent API.
         /// </summary>
-        private Stack<IParentBehaviourTreeNode> parentNodeStack = new Stack<IParentBehaviourTreeNode>();
+        private Stack<ParentBehaviourTreeNode> parentNodeStack = new Stack<ParentBehaviourTreeNode>();
 
         /// <summary>
         /// Create an action node.
@@ -29,7 +27,10 @@ namespace FluentBehaviourTree
             {
                 throw new ApplicationException("Can't create an unnested ActionNode, it must be a leaf node.");
             }
-
+            if (string.IsNullOrEmpty(name))
+            {
+                name = fn.Method.Name;
+            }
             var actionNode = new ActionNode(name, fn);
             parentNodeStack.Peek().AddChild(actionNode);
             return this;
@@ -40,6 +41,10 @@ namespace FluentBehaviourTree
         /// </summary>
         public BehaviourTreeBuilder Condition(string name, Func<TimeData, bool> fn)
         {
+            if (string.IsNullOrEmpty(name))
+            {
+                name = fn.Method.Name;
+            }
             return Do(name, t => fn(t) ? BehaviourTreeStatus.Success : BehaviourTreeStatus.Failure);
         }
 
@@ -110,13 +115,12 @@ namespace FluentBehaviourTree
         /// <summary>
         /// Splice a sub tree into the parent tree.
         /// </summary>
-        public BehaviourTreeBuilder Splice(IBehaviourTreeNode subTree)
+        public BehaviourTreeBuilder Splice(BehaviourTreeNode subTree)
         {
             if (subTree == null)
             {
                 throw new ArgumentNullException("subTree");
             }
-
             if (parentNodeStack.Count <= 0)
             {
                 throw new ApplicationException("Can't splice an unnested sub-tree, there must be a parent-tree.");
@@ -129,7 +133,7 @@ namespace FluentBehaviourTree
         /// <summary>
         /// Build the actual tree.
         /// </summary>
-        public IBehaviourTreeNode Build()
+        public BehaviourTreeNode Build()
         {
             if (curNode == null)
             {

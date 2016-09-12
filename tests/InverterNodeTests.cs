@@ -34,7 +34,7 @@ namespace tests
 
             var time = new TimeData();
 
-            var mockChildNode = new Mock<IBehaviourTreeNode>();
+            var mockChildNode = new Mock<BehaviourTreeNode>();
             mockChildNode
                 .Setup(m => m.Tick(time))
                 .Returns(BehaviourTreeStatus.Success);
@@ -53,7 +53,7 @@ namespace tests
 
             var time = new TimeData();
 
-            var mockChildNode = new Mock<IBehaviourTreeNode>();
+            var mockChildNode = new Mock<BehaviourTreeNode>();
             mockChildNode
                 .Setup(m => m.Tick(time))
                 .Returns(BehaviourTreeStatus.Failure);
@@ -72,7 +72,7 @@ namespace tests
 
             var time = new TimeData();
 
-            var mockChildNode = new Mock<IBehaviourTreeNode>();
+            var mockChildNode = new Mock<BehaviourTreeNode>();
             mockChildNode
                 .Setup(m => m.Tick(time))
                 .Returns(BehaviourTreeStatus.Running);
@@ -89,10 +89,10 @@ namespace tests
         {
             Init();
 
-            var mockChildNode1 = new Mock<IBehaviourTreeNode>();
+            var mockChildNode1 = new Mock<BehaviourTreeNode>();
             testObject.AddChild(mockChildNode1.Object);
 
-            var mockChildNode2 = new Mock<IBehaviourTreeNode>();
+            var mockChildNode2 = new Mock<BehaviourTreeNode>();
             Assert.Throws<ApplicationException>(() => 
                 testObject.AddChild(mockChildNode2.Object)
             );
