@@ -34,14 +34,14 @@ A behaviour tree is created through *BehaviourTreeBuilder*. The tree is returned
 	public void Startup()
 	{
 		var builder = new BehaviourTreeBuilder();
-		this.tree = BehaviourTreeBuilder
+		this.tree = builder
 			.Sequence("my-sequence")
-				.Do(t => 
+				.Do("action1",  t => 
 				{
 					// Action 1.
 					return BehaviourTreeStatus.Success;
-				}); 
-				.Do(t => 
+				})
+				.Do("action2", t => 
 				{
 					// Action 2.
 					return BehaviourTreeStatus.Success;
@@ -71,7 +71,7 @@ Behaviour tree nodes return the following status codes:
 
 Call the *Do* function to create an action node at the leaves of the behavior tree. 
 
-	.Do(t => 
+	.Do("do-something", t => 
 	{
 		// ... do something ...
 		// ... query the entity, query the environment then take some action ...
@@ -85,12 +85,12 @@ The return value defines the status of the node. Return *Success*, *Failure* or 
 Runs each child node in sequence. Fails for the first child node that *fails*. Moves to the next child when the current running child *succeeds*. Stays on the current child node while it returns *running*. Succeeds when all child nodes have succeeded.
 
 	.Sequence("my-sequence")
-		.Do(t => 
+		.Do("action1", t => 
 		{
 			// Sequential action 1.
 			return BehaviourTreeStatus.Success; // Run this.
-		}); 
-		.Do(t => 
+		}) 
+		.Do("action2", t => 
 		{
 			// Sequential action 2.
 			return BehaviourTreeStatus.Success; // Then run this.
@@ -105,12 +105,12 @@ Runs all child nodes in parallel. Continues to run until a required number of ch
 	int numRequiredToSucceed = 2;
 
 	.Parallel("my-parallel", numRequiredToFail, numRequiredToSucceed)
-		.Do(t => 
+		.Do("action1", t => 
 		{
 			// Parallel action 1.
 			return BehaviourTreeStatus.Running;
-		}); 
-		.Do(t => 
+		})
+		.Do("action2", t => 
 		{
 			// Parallel action 2.
 			return BehaviourTreeStatus.Running;
@@ -122,17 +122,17 @@ Runs all child nodes in parallel. Continues to run until a required number of ch
 Runs child nodes in sequence until it finds one that *succeeds*. Succeeds when it finds the first child that *succeeds*. For child nodes that *fail* it moves forward to the next child node. While a child is *running* it stays on that child node without moving forward. 
 
 	.Selector("my-selector")
-		.Do(t => 
+		.Do("action1", t => 
 		{
 			// Action 1.
 			return BehaviourTreeStatus.Failure; // Fail, move onto next child.
 		}); 
-		.Do(t => 
+		.Do("action2", t => 
 		{
 			// Action 2.
 			return BehaviourTreeStatus.Success; // Success, stop here.
 		})		
-		.Do(t => 
+		.Do("action3", t => 
 		{
 			// Action 3.
 			return BehaviourTreeStatus.Success; // Doesn't get this far. 
@@ -145,8 +145,8 @@ Runs child nodes in sequence until it finds one that *succeeds*. Succeeds when i
 The condition function is syntactic sugar for the *Do* function. It allows return of a boolean value that is then converted to a *success* or *failure*. It is intended to be used with *Selector*.
 
 	.Selector("my-selector")
-		.Condition(t => SomeBooleanCondition())	// Predicate that returns *true* or *false*. 
-		.Do(t => SomeAction())					// Action to run if the predicate evaluates to *true*. 
+		.Condition("condition1", t => SomeBooleanCondition())	// Predicate that returns *true* or *false*. 
+		.Do("action1", t => SomeAction())					// Action to run if the predicate evaluates to *true*. 
 	.End()
 
 
@@ -154,13 +154,13 @@ The condition function is syntactic sugar for the *Do* function. It allows retur
 
 Inverts the *success* or *failure* of the child node. Continues running while the child node is *running*.
 
-	.Inverter()
-		.Do(t => BehaviourTreeStatus.Success) // *Success* will be inverted to *failure*.
+	.Inverter("inverter1")
+		.Do("action1", t => BehaviourTreeStatus.Success) // *Success* will be inverted to *failure*.
 	.End() 
 
 
-	.Inverter()
-		.Do(t => BehaviourTreeStatus.Failure) // *Failure* will be inverted to *success*.
+	.Inverter("inverter1")
+		.Do("action1", t => BehaviourTreeStatus.Failure) // *Failure* will be inverted to *success*.
 	.End() 
 
 ## Nesting Behaviour Trees
@@ -187,14 +187,14 @@ Separately created sub-trees can be spliced into parent trees. This makes it eas
 	private IBehaviourTreeNode CreateSubTree()
 	{
 		var builder = new BehaviourTreeBuilder();
-		return BehaviourTreeBuilder
+		return builder
 			.Sequence("my-sub-tree")
-				.Do(t => 
+				.Do("action1", t => 
 				{
 					// Action 1.
 					return BehaviourTreeStatus.Success;
-				}); 
-				.Do(t => 
+				})
+				.Do("action2", t => 
 				{
 					// Action 2.
 					return BehaviourTreeStatus.Success;
@@ -206,7 +206,7 @@ Separately created sub-trees can be spliced into parent trees. This makes it eas
 	public void Startup()
 	{
 		var builder = new BehaviourTreeBuilder();
-		this.tree = BehaviourTreeBuilder
+		this.tree = builder
 			.Sequence("my-parent-sequence")
 				.Splice(CreateSubTree()) // Splice the child tree in.
 				.Splice(CreateSubTree()) // Splice again.
