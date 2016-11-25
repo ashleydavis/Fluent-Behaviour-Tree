@@ -36,7 +36,7 @@ namespace FluentBehaviourTree
         {
             if (this.enumerator == null)
                 this.Init();
-            do
+            while (this.enumerator.MoveNext())
             {
                 var childStatus = this.enumerator.Current.Tick(time);
                 if (childStatus != BehaviourTreeStatus.Success)
@@ -45,7 +45,7 @@ namespace FluentBehaviourTree
                         this.enumerator.Reset();
                     return childStatus;
                 }
-            } while (this.enumerator.MoveNext());
+            } 
             this.enumerator.Reset();
             return BehaviourTreeStatus.Success;
         }
