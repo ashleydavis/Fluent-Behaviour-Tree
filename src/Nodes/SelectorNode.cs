@@ -25,17 +25,28 @@ namespace FluentBehaviourTree
             this.name = name;
         }
 
+        private IEnumerator<IBehaviourTreeNode> enumerator;
+
+        public void Init()
+        {
+            this.enumerator = this.children.GetEnumerator();
+        }
+
         public BehaviourTreeStatus Tick(TimeData time)
         {
-            foreach (var child in children)
+            if (this.enumerator == null)
+                this.Init();
+            do
             {
-                var childStatus = child.Tick(time);
+                var childStatus = this.enumerator.Current.Tick(time);
                 if (childStatus != BehaviourTreeStatus.Failure)
                 {
+                    if (childStatus == BehaviourTreeStatus.Success)
+                        this.enumerator.Reset();
                     return childStatus;
                 }
-            }
-
+            } while (this.enumerator.MoveNext());
+            this.enumerator.Reset();
             return BehaviourTreeStatus.Failure;
         }
 
