@@ -44,6 +44,9 @@
     <Compile Include="IParentBehaviourTreeNode.cs" />
     <Compile Include="IBehaviourTreeNode.cs" />
     <Compile Include="Nodes\ActionNode.cs" />
+    <Compile Include="Nodes\BaseNode.cs" />
+    <Compile Include="Nodes\BaseParentNode.cs" />
+    <Compile Include="Nodes\ConditionNode.cs" />
     <Compile Include="Nodes\InverterNode.cs" />
     <Compile Include="Nodes\ParallelNode.cs" />
     <Compile Include="Nodes\SelectorNode.cs" />

@@ -8,28 +8,33 @@ namespace FluentBehaviourTree
     /// <summary>
     /// A behaviour tree leaf node for running an action.
     /// </summary>
-    public class ActionNode : IBehaviourTreeNode
+    public class ActionNode : BaseNode,IBehaviourTreeNode
     {
-        /// <summary>
-        /// The name of the node.
-        /// </summary>
-        private string name;
-
+       
         /// <summary>
         /// Function to invoke for the action.
         /// </summary>
-        private Func<TimeData, BehaviourTreeStatus> fn;
+        private Func<TimeData, IEnumerator<BehaviourTreeStatus>> fn;
         
 
-        public ActionNode(string name, Func<TimeData, BehaviourTreeStatus> fn)
-        {
-            this.name=name;
+        public ActionNode(string name, Func<TimeData, IEnumerator<BehaviourTreeStatus>> fn): base(name)
+        {   
             this.fn=fn;
         }
 
-        public BehaviourTreeStatus Tick(TimeData time)
+        public IEnumerator<BehaviourTreeStatus> Tick(TimeData time)
         {
-            return fn(time);
+           for ( var e = fn(time); e.MoveNext(); )
+            {
+                currentStatus = e.Current;
+                yield return currentStatus;
+                // this will continue looping until complete and as long as
+                // the function returns another enumerated value that is not success or failure
+                if (isComplete())
+                    yield break;
+            }
+           
         }
+      
     }
 }

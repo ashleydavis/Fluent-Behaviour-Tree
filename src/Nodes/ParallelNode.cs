@@ -1,25 +1,14 @@
-﻿using System;
+﻿using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace FluentBehaviourTree
 {
     /// <summary>
     /// Runs childs nodes in parallel.
     /// </summary>
-    public class ParallelNode : IParentBehaviourTreeNode
+    public class ParallelNode : BaseParentNode, IParentBehaviourTreeNode
     {
-        /// <summary>
-        /// Name of the node.
-        /// </summary>
-        private string name;
-
-        /// <summary>
-        /// List of child nodes.
-        /// </summary>
-        private List<IBehaviourTreeNode> children = new List<IBehaviourTreeNode>();
-
+       
         /// <summary>
         /// Number of child failures required to terminate with failure.
         /// </summary>
@@ -29,45 +18,110 @@ namespace FluentBehaviourTree
         /// Number of child successess require to terminate with success.
         /// </summary>
         private int numRequiredToSucceed;
+        private int numChildrenSuceeded;
+        private int numChildrenFailed;
+        private List<IEnumerator> childStatus;
+        private List<IBehaviourTreeNode> runningNodes;
 
-        public ParallelNode(string name, int numRequiredToFail, int numRequiredToSucceed)
+        public ParallelNode(string name, int numRequiredToFail, int numRequiredToSucceed):base(name)
         {
-            this.name = name;
             this.numRequiredToFail = numRequiredToFail;
             this.numRequiredToSucceed = numRequiredToSucceed;
+
         }
 
-        public BehaviourTreeStatus Tick(TimeData time)
+        public IEnumerator<BehaviourTreeStatus> Tick(TimeData time)
         {
-            var numChildrenSuceeded = 0;
-            var numChildrenFailed = 0;
-
-            foreach (var child in children)
+            currentStatus = BehaviourTreeStatus.Running;
+            childStatus = new List<IEnumerator>();
+            runningNodes = new List<IBehaviourTreeNode>();
+            numChildrenSuceeded = 0;
+            numChildrenFailed   = 0;
+            while (isRunning())
             {
-                var childStatus = child.Tick(time);
-                switch (childStatus)
+                // start running each child node
+                // if child node returns that it is in running state
+                // then continue to the next child node until all child nodes
+                // have been started. Save the ones that are running in childStatus list for 
+                // advancement after all nodes have started ticking.
+                foreach (IBehaviourTreeNode child in children)
                 {
-                    case BehaviourTreeStatus.Success: ++numChildrenSuceeded; break;
-                    case BehaviourTreeStatus.Failure: ++numChildrenFailed; break;
+                    IEnumerator<BehaviourTreeStatus> chStatus = child.Tick(time);
+                    chStatus.MoveNext();
+
+                    if (chStatus.Current == BehaviourTreeStatus.Running)
+                    {
+                        // save Enumerator for next round of advancement after all child nodes have
+                        // been started.
+                        runningNodes.Add(child);
+                        childStatus.Add(chStatus);
+                        // only return an enumerated value after all nodes have been evaluated
+                        //yield return BehaviourTreeStatus.Running;
+                      
+                    }
+                    else {
+                        switch (chStatus.Current)
+                        {
+                            case BehaviourTreeStatus.Success: ++numChildrenSuceeded; break;
+                            case BehaviourTreeStatus.Failure: ++numChildrenFailed; break;
+                        }
+                    }
                 }
-            }
 
-            if (numRequiredToSucceed > 0 && numChildrenSuceeded >= numRequiredToSucceed)
-            {
-                return BehaviourTreeStatus.Success;
-            }
+                // if the list of saved enumerators is not empty, advance until they have all been completed
+                bool hasRunning = childStatus.Count > 0;
+             
+                while (hasRunning)
+                {
+                    // return once for all nodes in running status
+                    yield return BehaviourTreeStatus.Running;
+                    hasRunning = false;
+                    int curElement = -1;
+                    foreach (IEnumerator<BehaviourTreeStatus> cstat in childStatus)
+                    {
+                        ++curElement;
+                        if (runningNodes[curElement].isRunning())
+                        {
+                            if (!cstat.MoveNext())
+                            {
+                                // no more values - this is an error as a node should always exit running status
+                                // and return either failed or success
+                                runningNodes[curElement].currentStatus = BehaviourTreeStatus.Failure;
+                                ++numChildrenFailed;
+                            }
+                            else 
+                            if (cstat.Current != BehaviourTreeStatus.Running)
+                            {
+                                switch (cstat.Current)
+                                {
+                                    case BehaviourTreeStatus.Success: ++numChildrenSuceeded; break;
+                                    case BehaviourTreeStatus.Failure: ++numChildrenFailed; break;
+                                }
+                            }
+                            else {
+                                hasRunning = true;
+                            }
+                        }   
+                    }
+                }
 
-            if (numRequiredToFail > 0 && numChildrenFailed >= numRequiredToFail)
-            {
-                return BehaviourTreeStatus.Failure;
+                // All nodes should either have returned failed or successs
+                if (numRequiredToSucceed > 0 && numChildrenSuceeded >= numRequiredToSucceed)
+                {
+                    currentStatus = BehaviourTreeStatus.Success;
+                }
+                else
+                if (numRequiredToFail > 0 && numChildrenFailed >= numRequiredToFail)
+                {
+                    currentStatus = BehaviourTreeStatus.Failure;
+                }
+                else {
+                    // Return Running if conditions were not met
+                    currentStatus = BehaviourTreeStatus.Running;
+                }
+                yield return currentStatus;
             }
-
-            return BehaviourTreeStatus.Running;
         }
-
-        public void AddChild(IBehaviourTreeNode child)
-        {
-            children.Add(child);
-        }
+        
     }
 }

@@ -1,50 +1,56 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace FluentBehaviourTree
 {
     /// <summary>
     /// Runs child nodes in sequence, until one fails.
     /// </summary>
-    public class SequenceNode : IParentBehaviourTreeNode
+    public class SequenceNode : BaseParentNode, IParentBehaviourTreeNode
     {
-        /// <summary>
-        /// Name of the node.
-        /// </summary>
-        private string name;
-
-        /// <summary>
-        /// List of child nodes.
-        /// </summary>
-        private List<IBehaviourTreeNode> children = new List<IBehaviourTreeNode>(); //todo: this could be optimized as a baked array.
-
-        public SequenceNode(string name)
+      
+        public SequenceNode(string name):base(name)
         {
-            this.name = name;
         }
 
-        public BehaviourTreeStatus Tick(TimeData time)
+        public IEnumerator<BehaviourTreeStatus> Tick(TimeData time)
         {
+            currentStatus = BehaviourTreeStatus.Running;
+            int numFailed = 0;
             foreach (var child in children)
             {
                 var childStatus = child.Tick(time);
-                if (childStatus != BehaviourTreeStatus.Success)
+                childStatus.MoveNext();
+                currentStatus = childStatus.Current;
+                if (isRunning())
                 {
-                    return childStatus;
+                    // keep looping until we exit running mode or we
+                    // run out of enum values.
+                    yield return BehaviourTreeStatus.Running;
+                    while (childStatus.MoveNext())
+                    {
+                        currentStatus = childStatus.Current;
+                        if (isComplete())
+                            break;
+                    }
+                    // if node is still running and has run out of values
+                    // this is an error - should always return success/failure
+                    // eventually.
+                    if (isRunning())
+                    {
+                        child.currentStatus = BehaviourTreeStatus.Failure;
+                        currentStatus       = BehaviourTreeStatus.Failure;
+                    }
                 }
+                if (isFailed())
+                {
+                    break;
+                }
+               
             }
 
-            return BehaviourTreeStatus.Success;
+            yield return currentStatus;
         }
 
-        /// <summary>
-        /// Add a child to the sequence.
-        /// </summary>
-        public void AddChild(IBehaviourTreeNode child)
-        {
-            children.Add(child);
-        }
+        
     }
 }

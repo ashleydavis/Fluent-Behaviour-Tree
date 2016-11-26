@@ -8,24 +8,20 @@ namespace FluentBehaviourTree
     /// <summary>
     /// Decorator node that inverts the success/failure of its child.
     /// </summary>
-    public class InverterNode : IParentBehaviourTreeNode
+    public class InverterNode : BaseNode, IParentBehaviourTreeNode
     {
-        /// <summary>
-        /// Name of the node.
-        /// </summary>
-        private string name;
-
+        
         /// <summary>
         /// The child to be inverted.
         /// </summary>
         private IBehaviourTreeNode childNode;
 
-        public InverterNode(string name)
+        public InverterNode(string name): base(name)
         {
             this.name = name;
         }
 
-        public BehaviourTreeStatus Tick(TimeData time)
+        public IEnumerator<BehaviourTreeStatus> Tick(TimeData time)
         {
             if (childNode == null)
             {
@@ -33,18 +29,32 @@ namespace FluentBehaviourTree
             }
 
             var result = childNode.Tick(time);
-            if (result == BehaviourTreeStatus.Failure)
+            result.MoveNext();
+            currentStatus = result.Current;
+            if (isRunning())
             {
-                return BehaviourTreeStatus.Success;
+                // keep looping until we exit running mode or we
+                // run out of enum values.
+                yield return currentStatus;
+                while (result.MoveNext())
+                {
+                    currentStatus = result.Current;
+                    if (!isRunning())
+                        break;
+                }
             }
-            else if (result == BehaviourTreeStatus.Success)
+            if (isFailed())
             {
-                return BehaviourTreeStatus.Failure;
+               currentStatus = BehaviourTreeStatus.Success;
             }
-            else
+            else if (isSuccess())
             {
-                return result;
+               currentStatus =  BehaviourTreeStatus.Failure;
             }
+           
+            yield return currentStatus;
+           
+           
         }
 
         /// <summary>
@@ -58,6 +68,29 @@ namespace FluentBehaviourTree
             }
 
             this.childNode = child;
+            childNode.parent = this;
+        }
+        public override void SetStatusAll(BehaviourTreeStatus aStatus)
+        {
+            currentStatus = aStatus;
+            childNode.SetStatusAll(aStatus);
+        }
+        public override int CountAllForStatus(BehaviourTreeStatus aStatus)
+        {
+            // return a count of the status for all nodes under the current node that have the 
+            // specified status value
+            int numCount = 0;
+            if (currentStatus == aStatus) ++numCount;
+            numCount += childNode.CountAllForStatus(aStatus);
+            return numCount;
+        }
+        public override string getTreeAsString(string prefix)
+        {
+            StringBuilder builder = new StringBuilder();
+            builder.Append(base.getTreeAsString(prefix));
+            prefix += treePrefix;
+            builder.Append(childNode.getTreeAsString(prefix));   
+            return builder.ToString();
         }
     }
 }
