@@ -57,6 +57,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SelectorNodeTests.cs" />
     <Compile Include="SequenceNodeTests.cs" />
+    <Compile Include="TreeBuilderTest1.cs" />
+    <Compile Include="TreeBuilderTest2.cs" />
+    <Compile Include="TreeBuilderTest3.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
