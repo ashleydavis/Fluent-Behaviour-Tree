@@ -126,5 +126,38 @@ namespace tests
             mockChild1.Verify(m => m.Tick(time), Times.Once());
             mockChild2.Verify(m => m.Tick(time), Times.Once());
         }
+
+        [Fact]
+        public void sequence_only_evaluates_the_current_node()
+        {
+            Init();
+
+            var time = new TimeData();
+
+            var mockChild1 = new Mock<IBehaviourTreeNode>();
+            mockChild1
+                .Setup(m => m.Tick(time))
+                .Returns(BehaviourTreeStatus.Success);
+
+            var mockChild2 = new Mock<IBehaviourTreeNode>();
+            mockChild2
+                .Setup(m => m.Tick(time))
+                .Returns(BehaviourTreeStatus.Running);
+            var mockChild3 = new Mock<IBehaviourTreeNode>();
+            mockChild3
+                .Setup(m => m.Tick(time))
+                .Returns(BehaviourTreeStatus.Failure);
+
+            testObject.AddChild(mockChild1.Object);
+            testObject.AddChild(mockChild2.Object);
+            testObject.AddChild(mockChild3.Object);
+
+            Assert.Equal(BehaviourTreeStatus.Running, testObject.Tick(time));
+            Assert.Equal(BehaviourTreeStatus.Running, testObject.Tick(time));
+
+            mockChild1.Verify(m => m.Tick(time), Times.Once());
+            mockChild2.Verify(m => m.Tick(time), Times.Exactly(2));
+            mockChild3.Verify(m => m.Tick(time), Times.Never());
+        }
     }
 }
