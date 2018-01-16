@@ -8,7 +8,7 @@ namespace FluentBehaviourTree
     /// <summary>
     /// A behaviour tree leaf node for running an action.
     /// </summary>
-    public class ActionNode : IBehaviourTreeNode
+    public class ActionNode<T> : IBehaviourTreeNode<T>
     {
         /// <summary>
         /// The name of the node.
@@ -18,16 +18,16 @@ namespace FluentBehaviourTree
         /// <summary>
         /// Function to invoke for the action.
         /// </summary>
-        private Func<TimeData, BehaviourTreeStatus> fn;
+        private Func<T, BehaviourTreeStatus> fn;
         
 
-        public ActionNode(string name, Func<TimeData, BehaviourTreeStatus> fn)
+        public ActionNode(string name, Func<T, BehaviourTreeStatus> fn)
         {
             this.name=name;
             this.fn=fn;
         }
 
-        public BehaviourTreeStatus Tick(TimeData time)
+        public BehaviourTreeStatus Tick(T time)
         {
             return fn(time);
         }

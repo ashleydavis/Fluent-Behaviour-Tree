@@ -8,29 +8,29 @@ namespace FluentBehaviourTree
     /// <summary>
     /// Fluent API for building a behaviour tree.
     /// </summary>
-    public class BehaviourTreeBuilder
+    public class BehaviourTreeBuilder<T>
     {
         /// <summary>
         /// Last node created.
         /// </summary>
-        private IBehaviourTreeNode curNode = null;
+        private IBehaviourTreeNode<T> curNode = null;
 
         /// <summary>
         /// Stack node nodes that we are build via the fluent API.
         /// </summary>
-        private Stack<IParentBehaviourTreeNode> parentNodeStack = new Stack<IParentBehaviourTreeNode>();
+        private Stack<IParentBehaviourTreeNode<T>> parentNodeStack = new Stack<IParentBehaviourTreeNode<T>>();
 
         /// <summary>
         /// Create an action node.
         /// </summary>
-        public BehaviourTreeBuilder Do(string name, Func<TimeData, BehaviourTreeStatus> fn)
+        public BehaviourTreeBuilder<T> Do(string name, Func<T, BehaviourTreeStatus> fn)
         {
             if (parentNodeStack.Count <= 0)
             {
                 throw new ApplicationException("Can't create an unnested ActionNode, it must be a leaf node.");
             }
 
-            var actionNode = new ActionNode(name, fn);
+            var actionNode = new ActionNode<T>(name, fn);
             parentNodeStack.Peek().AddChild(actionNode);
             return this;
         }
@@ -38,7 +38,7 @@ namespace FluentBehaviourTree
         /// <summary>
         /// Like an action node... but the function can return true/false and is mapped to success/failure.
         /// </summary>
-        public BehaviourTreeBuilder Condition(string name, Func<TimeData, bool> fn)
+        public BehaviourTreeBuilder<T> Condition(string name, Func<T, bool> fn)
         {
             return Do(name, t => fn(t) ? BehaviourTreeStatus.Success : BehaviourTreeStatus.Failure);
         }
@@ -46,9 +46,9 @@ namespace FluentBehaviourTree
         /// <summary>
         /// Create an inverter node that inverts the success/failure of its children.
         /// </summary>
-        public BehaviourTreeBuilder Inverter(string name)
+        public BehaviourTreeBuilder<T> Inverter(string name)
         {
-            var inverterNode = new InverterNode(name);
+            var inverterNode = new InverterNode<T>(name);
 
             if (parentNodeStack.Count > 0)
             {
@@ -62,9 +62,9 @@ namespace FluentBehaviourTree
         /// <summary>
         /// Create a sequence node.
         /// </summary>
-        public BehaviourTreeBuilder Sequence(string name)
+        public BehaviourTreeBuilder<T> Sequence(string name)
         {
-            var sequenceNode = new SequenceNode(name);
+            var sequenceNode = new SequenceNode<T>(name);
 
             if (parentNodeStack.Count > 0)
             {
@@ -78,9 +78,9 @@ namespace FluentBehaviourTree
         /// <summary>
         /// Create a parallel node.
         /// </summary>
-        public BehaviourTreeBuilder Parallel(string name, int numRequiredToFail, int numRequiredToSucceed)
+        public BehaviourTreeBuilder<T> Parallel(string name, int numRequiredToFail, int numRequiredToSucceed)
         {
-            var parallelNode = new ParallelNode(name, numRequiredToFail, numRequiredToSucceed);
+            var parallelNode = new ParallelNode<T>(name, numRequiredToFail, numRequiredToSucceed);
 
             if (parentNodeStack.Count > 0)
             {
@@ -94,9 +94,9 @@ namespace FluentBehaviourTree
         /// <summary>
         /// Create a selector node.
         /// </summary>
-        public BehaviourTreeBuilder Selector(string name)
+        public BehaviourTreeBuilder<T> Selector(string name)
         {
-            var selectorNode = new SelectorNode(name);
+            var selectorNode = new SelectorNode<T>(name);
 
             if (parentNodeStack.Count > 0)
             {
@@ -110,7 +110,7 @@ namespace FluentBehaviourTree
         /// <summary>
         /// Splice a sub tree into the parent tree.
         /// </summary>
-        public BehaviourTreeBuilder Splice(IBehaviourTreeNode subTree)
+        public BehaviourTreeBuilder<T> Splice(IBehaviourTreeNode<T> subTree)
         {
             if (subTree == null)
             {
@@ -129,7 +129,7 @@ namespace FluentBehaviourTree
         /// <summary>
         /// Build the actual tree.
         /// </summary>
-        public IBehaviourTreeNode Build()
+        public IBehaviourTreeNode<T> Build()
         {
             if (curNode == null)
             {
@@ -141,7 +141,7 @@ namespace FluentBehaviourTree
         /// <summary>
         /// Ends a sequence of children.
         /// </summary>
-        public BehaviourTreeBuilder End()
+        public BehaviourTreeBuilder<T> End()
         {
             curNode = parentNodeStack.Pop();
             return this;

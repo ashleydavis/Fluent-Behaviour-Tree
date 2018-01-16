@@ -9,11 +9,11 @@ namespace tests
 {
     public class BehaviourTreeBuilderTests
     {
-        BehaviourTreeBuilder testObject;
+        BehaviourTreeBuilder<TimeData> testObject;
 
         void Init()
         {
-            testObject = new BehaviourTreeBuilder();
+            testObject = new BehaviourTreeBuilder<TimeData>();
         }
 
         [Fact]
@@ -54,7 +54,7 @@ namespace tests
                 .End()
                 .Build();
 
-            Assert.IsType<InverterNode>(node);
+            Assert.IsType<InverterNode<TimeData>>(node);
             Assert.Equal(BehaviourTreeStatus.Failure, node.Tick(new TimeData()));
         }
 
@@ -83,7 +83,7 @@ namespace tests
                 .End()
                 .Build();
 
-            Assert.IsType<InverterNode>(node);
+            Assert.IsType<InverterNode<TimeData>>(node);
             Assert.Equal(BehaviourTreeStatus.Failure, node.Tick(new TimeData()));
         }
 
@@ -100,7 +100,7 @@ namespace tests
                 .End()
                 .Build();
 
-            Assert.IsType<InverterNode>(node);
+            Assert.IsType<InverterNode<TimeData>>(node);
             Assert.Equal(BehaviourTreeStatus.Success, node.Tick(new TimeData()));
         }
 
@@ -142,7 +142,7 @@ namespace tests
                 .End()
                 .Build();
 
-            Assert.IsType<SequenceNode>(sequence);
+            Assert.IsType<SequenceNode<TimeData>>(sequence);
             Assert.Equal(BehaviourTreeStatus.Success, sequence.Tick(new TimeData()));
             Assert.Equal(2, invokeCount);
         }
@@ -169,7 +169,7 @@ namespace tests
                 .End()
                 .Build();
 
-            Assert.IsType<ParallelNode>(parallel);
+            Assert.IsType<ParallelNode<TimeData>>(parallel);
             Assert.Equal(BehaviourTreeStatus.Success, parallel.Tick(new TimeData()));
             Assert.Equal(2, invokeCount);
         }
@@ -196,7 +196,7 @@ namespace tests
                 .End()
                 .Build();
 
-            Assert.IsType<SelectorNode>(parallel);
+            Assert.IsType<SelectorNode<TimeData>>(parallel);
             Assert.Equal(BehaviourTreeStatus.Success, parallel.Tick(new TimeData()));
             Assert.Equal(2, invokeCount);
         }
