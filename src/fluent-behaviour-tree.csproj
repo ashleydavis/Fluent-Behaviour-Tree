@@ -50,6 +50,7 @@
     <Compile Include="Nodes\SequenceNode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TimeData.cs" />
+    <Compile Include="ParentBehaviourTreeNode.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

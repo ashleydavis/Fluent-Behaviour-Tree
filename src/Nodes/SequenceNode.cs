@@ -8,7 +8,7 @@ namespace FluentBehaviourTree
     /// <summary>
     /// Runs child nodes in sequence, until one fails.
     /// </summary>
-    public class SequenceNode<T> : IParentBehaviourTreeNode<T>
+    public class SequenceNode<T> : ParentBehaviourTreeNode<T>
     {
         /// <summary>
         /// Name of the node.
@@ -25,7 +25,12 @@ namespace FluentBehaviourTree
             this.name = name;
         }
 
-        public BehaviourTreeStatus Tick(T time)
+        public SequenceNode(string name, params IBehaviourTreeNode<T>[] behaviours): this(name)
+        {
+            AddChildren(behaviours);
+        }
+
+        public override BehaviourTreeStatus Tick(T time)
         {
             foreach (var child in children)
             {
@@ -42,7 +47,7 @@ namespace FluentBehaviourTree
         /// <summary>
         /// Add a child to the sequence.
         /// </summary>
-        public void AddChild(IBehaviourTreeNode<T> child)
+        public override void AddChild(IBehaviourTreeNode<T> child)
         {
             children.Add(child);
         }
