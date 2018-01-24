@@ -3,3 +3,4 @@ obj/
 bin/
 *.nupkg
 *.user
+src/.vs/

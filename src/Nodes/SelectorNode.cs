@@ -8,7 +8,7 @@ namespace FluentBehaviourTree
     /// <summary>
     /// Selects the first node that succeeds. Tries successive nodes until it finds one that doesn't fail.
     /// </summary>
-    public class SelectorNode : IParentBehaviourTreeNode
+    public class SelectorNode<T> : ParentBehaviourTreeNode<T>
     {
         /// <summary>
         /// The name of the node.
@@ -18,14 +18,19 @@ namespace FluentBehaviourTree
         /// <summary>
         /// List of child nodes.
         /// </summary>
-        private List<IBehaviourTreeNode> children = new List<IBehaviourTreeNode>(); //todo: optimization, bake this to an array.
+        private List<IBehaviourTreeNode<T>> children = new List<IBehaviourTreeNode<T>>(); //todo: optimization, bake this to an array.
 
         public SelectorNode(string name)
         {
             this.name = name;
         }
 
-        public BehaviourTreeStatus Tick(TimeData time)
+        public SelectorNode(string name, params IBehaviourTreeNode<T>[] behaviours):this(name)
+        {
+            AddChildren(behaviours);
+        }
+
+        public override BehaviourTreeStatus Tick(T time)
         {
             foreach (var child in children)
             {
@@ -42,7 +47,7 @@ namespace FluentBehaviourTree
         /// <summary>
         /// Add a child node to the selector.
         /// </summary>
-        public void AddChild(IBehaviourTreeNode child)
+        public override void AddChild(IBehaviourTreeNode<T> child)
         {
             children.Add(child);
         }

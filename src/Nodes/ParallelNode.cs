@@ -8,7 +8,7 @@ namespace FluentBehaviourTree
     /// <summary>
     /// Runs childs nodes in parallel.
     /// </summary>
-    public class ParallelNode : IParentBehaviourTreeNode
+    public class ParallelNode<T> : ParentBehaviourTreeNode<T>
     {
         /// <summary>
         /// Name of the node.
@@ -18,7 +18,7 @@ namespace FluentBehaviourTree
         /// <summary>
         /// List of child nodes.
         /// </summary>
-        private List<IBehaviourTreeNode> children = new List<IBehaviourTreeNode>();
+        private List<IBehaviourTreeNode<T>> children = new List<IBehaviourTreeNode<T>>();
 
         /// <summary>
         /// Number of child failures required to terminate with failure.
@@ -37,7 +37,14 @@ namespace FluentBehaviourTree
             this.numRequiredToSucceed = numRequiredToSucceed;
         }
 
-        public BehaviourTreeStatus Tick(TimeData time)
+        public ParallelNode(string name, int numRequiredToFail, int numRequiredToSucceed, params IBehaviourTreeNode<T>[] behaviours)
+            : this(name, numRequiredToFail, numRequiredToSucceed)
+        {
+            AddChildren(behaviours);
+        }
+
+
+        public override BehaviourTreeStatus Tick(T time)
         {
             var numChildrenSuceeded = 0;
             var numChildrenFailed = 0;
@@ -65,7 +72,7 @@ namespace FluentBehaviourTree
             return BehaviourTreeStatus.Running;
         }
 
-        public void AddChild(IBehaviourTreeNode child)
+        public override void AddChild(IBehaviourTreeNode<T> child)
         {
             children.Add(child);
         }
